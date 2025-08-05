@@ -118,14 +118,14 @@ app.post("/familias", upload.single("archivo"), async (req, res) => {
             const nombreArchivo = Date.now() + "_" + req.file.originalname;
 
             const { data, error } = await supabase.storage
-                .from("documentos_familias")
+                .from("documentosfamilias")
                 .upload(nombreArchivo, req.file.buffer, {
                     contentType: req.file.mimetype
                 });
 
             if (error) throw error;
 
-            archivoURL = `${process.env.SUPABASE_URL}/storage/v1/object/public/documentos_familias/${nombreArchivo}`;
+            archivoURL = `${process.env.SUPABASE_URL}/storage/v1/object/public/documentosfamilias/${nombreArchivo}`;
         }
 
         // Guardar en la base de datos junto con la URL del archivo
