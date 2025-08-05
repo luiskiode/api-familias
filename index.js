@@ -76,8 +76,11 @@ app.post("/familias", upload.single("archivo"), async (req, res) => {
 
     res.status(200).json({ message: "Familia registrada con éxito", archivo: archivoURL });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error al registrar familia" });
+    console.error("🔥 ERROR AL REGISTRAR FAMILIA:", error);
+    res.status(500).json({
+        error: error.message || error,
+        detalles: error
+    });
   }
 });
 
