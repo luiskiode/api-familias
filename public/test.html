@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Prueba API Familias</title>
+</head>
+<body style="font-family: Arial; padding: 20px;">
+  <h1>Formulario de prueba API</h1>
+  <form id="testForm" enctype="multipart/form-data">
+    <label>Nombres y Apellidos:</label><br>
+    <input type="text" name="nombres_apellidos" value="Juan Pérez" required><br><br>
+
+    <label>DNI:</label><br>
+    <input type="text" name="dni_solicitante" value="12345678" required><br><br>
+
+    <label>Apellido de la familia:</label><br>
+    <input type="text" name="apellido_familia" value="Pérez" required><br><br>
+
+    <label>Fecha de registro:</label><br>
+    <input type="date" name="fecha_registro" value="2025-08-04" required><br><br>
+
+    <label>Teléfono:</label><br>
+    <input type="tel" name="telefono_contacto" value="987654321" required><br><br>
+
+    <label>Observaciones:</label><br>
+    <textarea name="observaciones">Ninguna</textarea><br><br>
+
+    <label>Archivo:</label><br>
+    <input type="file" name="archivo" required><br><br>
+
+    <button type="submit">Enviar prueba</button>
+  </form>
+
+  <p id="resultado"></p>
+
+  <script>
+    document.getElementById("testForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+
+      try {
+        const res = await fetch("https://api-familias.onrender.com/familias", {
+          method: "POST",
+          body: formData
+        });
+
+        const data = await res.json();
+        document.getElementById("resultado").innerText = JSON.stringify(data, null, 2);
+      } catch (error) {
+        document.getElementById("resultado").innerText = "Error: " + error;
+      }
+    });
+  </script>
+</body>
+</html>
