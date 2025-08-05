@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cáritas - Registro de Familias</title>
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #b71c1c, #f44336);
+        color: white;
+    }
+    header {
+        background: rgba(0,0,0,0.2);
+        padding: 10px;
+        text-align: center;
+        font-size: 1.5em;
+        font-weight: bold;
+    }
+    nav {
+        display: flex;
+        justify-content: center;
+        background: rgba(0,0,0,0.3);
+    }
+    nav button {
+        background: none;
+        border: none;
+        color: white;
+        padding: 14px 20px;
+        cursor: pointer;
+        font-size: 1em;
+    }
+    nav button:hover {
+        background: rgba(255,255,255,0.2);
+    }
+    section {
+        display: none;
+        padding: 20px;
+        max-width: 800px;
+        margin: auto;
+    }
+    section.active {
+        display: block;
+    }
+    input, textarea {
+        width: 100%;
+        padding: 8px;
+        margin: 6px 0 12px;
+        border: none;
+        border-radius: 5px;
+        font-size: 1em;
+    }
+    input[type="date"] {
+        color: black;
+    }
+    button.submit-btn {
+        background: white;
+        color: #b71c1c;
+        padding: 10px 20px;
+        border: none;
+        font-size: 1em;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+    button.submit-btn:hover {
+        background: #ffcdd2;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        color: black;
+    }
+    th, td {
+        padding: 10px;
+        border: 1px solid #ccc;
+        text-align: left;
+    }
+    .success {
+        background: #4caf50;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+    }
+    .error {
+        background: #f44336;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+    }
+</style>
+</head>
+<body>
+
+<header>Cáritas - Registro y Listado de Familias</header>
+
+<nav>
+    <button onclick="showSection('inicio')">Inicio</button>
+    <button onclick="showSection('registro')">Registro de Familias</button>
+    <button onclick="showSection('listado')">Listado de Familias</button>
+    <button onclick="showSection('contacto')">Contacto</button>
+</nav>
+
+<section id="inicio" class="active">
+    <h2>Bienvenido</h2>
+    <p>Esta plataforma permite registrar familias y visualizar el listado de beneficiarios de Cáritas.</p>
+</section>
+
+<section id="registro">
+    <h2>Registro de Familias</h2>
+    <div id="msg"></div>
+    <form id="familiaForm">
+
+        <form id="formFamilia" enctype="multipart/form-data"></form>
+
+        <label>Nombres y Apellidos del Solicitante*</label>
+        <input type="text" id="nombres_apellidos" required>
+
+        <label>DNI del Solicitante*</label>
+        <input type="text" id="dni_solicitante" maxlength="8" pattern="[0-9]{8}" required>
+
+        <label>Apellido de la Familia*</label>
+        <input type="text" id="apellido_familia" required>
+
+        <label>Fecha de Registro de Ayuda*</label>
+        <input type="date" id="fecha_registro" required>
+
+        <label>Teléfono de Contacto*</label>
+        <input type="text" id="telefono_contacto" pattern="[0-9]+" required>
+
+        <label>Observaciones</label>
+        <textarea id="observaciones"></textarea>
+
+        <label for="archivo">Adjuntar documento:</label>
+<input type="file" id="archivo" name="documentosfamilias" accept=".pdf,.jpg,.png">
+
+        <button type="submit" class="submit-btn">Registrar</button>
+    </form>
+</section>
+
+<section id="listado">
+    <h2>Listado de Familias</h2>
+    <table id="familiasTable">
+        <thead>
+            <tr>
+                <th>Nombres y Apellidos</th>
+                <th>DNI</th>
+                <th>Apellido Familia</th>
+                <th>Fecha Registro</th>
+                <th>Teléfono</th>
+                <th>Observaciones</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</section>
+
+<section id="contacto">
+    <h2>Contacto</h2>
+    <p>Email: contacto@caritas.org</p>
+    <p>Teléfono: +51 999 888 777</p>
+</section>
+
+<script>
+const API_URL = "https://api-familias.onrender.com/familias";
+
+function showSection(id) {
+    document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+}
+
+// Enviar formulario
+document.getElementById("familiaForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const msgDiv = document.getElementById("msg");
+    msgDiv.innerHTML = "";
+
+    const data = {
+        nombres_apellidos: document.getElementById("nombres_apellidos").value.trim(),
+        dni_solicitante: document.getElementById("dni_solicitante").value.trim(),
+        apellido_familia: document.getElementById("apellido_familia").value.trim(),
+        fecha_registro: document.getElementById("fecha_registro").value,
+        telefono_contacto: document.getElementById("telefono_contacto").value.trim(),
+        observaciones: document.getElementById("observaciones").value.trim()
+    };
+
+    try {
+        const res = await fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+        if (res.ok) {
+            msgDiv.innerHTML = "<div class='success'>✅ Registro exitoso</div>";
+            e.target.reset();
+            loadFamilias();
+        } else {
+            msgDiv.innerHTML = "<div class='error'>❌ Error al registrar</div>";
+        }
+    } catch {
+        msgDiv.innerHTML = "<div class='error'>❌ No se pudo conectar con el servidor</div>";
+    }
+});
+
+// Cargar listado
+async function loadFamilias() {
+    try {
+        const res = await fetch(API_URL);
+        const familias = await res.json();
+        const tbody = document.querySelector("#familiasTable tbody");
+        tbody.innerHTML = "";
+        familias.forEach(f => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${f.nombres_apellidos || ""}</td>
+                <td>${f.dni_solicitante || ""}</td>
+                <td>${f.apellido_familia || ""}</td>
+                <td>${f.fecha_registro || ""}</td>
+                <td>${f.telefono_contacto || ""}</td>
+                <td>${f.observaciones || ""}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } catch {
+        console.error("Error cargando familias");
+    }
+}
+
+loadFamilias();
+</script>
+
+</body>
+</html>
