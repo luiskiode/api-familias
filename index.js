@@ -22,12 +22,30 @@ app.get("/familias", async (req, res) => {
 
 // Agregar familia
 app.post("/familias", async (req, res) => {
-  const { nombre, direccion, telefono } = req.body;
-  const { data, error } = await supabase
-    .from("familias")
-    .insert([{ nombre, direccion, telefono }]);
+  const { 
+    nombres_apellidos,
+    dni_solicitante,
+    apellido_familia,
+    fecha_registro,
+    telefono_contacto,
+    observaciones
+  } = req.body;
+
+ const { data, error } = await supabase
+  .from("familias")
+  .insert([{
+    nombres_apellidos,
+    dni_solicitante,
+    apellido_familia,
+    fecha_registro,
+    telefono_contacto,
+    observaciones
+  }]);
   if (error) return res.status(500).json(error);
   res.json(data);
 });
 
-app.listen(3000, () => console.log("API funcionando en puerto 3000"));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`API funcionando en puerto ${PORT}`);
+  });
