@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Listado de Familias - Cáritas CNC</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header>Listado de Familias Registradas</header>
+
+<input type="text" id="search" placeholder="Buscar por apellido, dirección, etc...">
+<table id="familiasTable">
+  <thead>
+    <tr>
+      <th>Nombres</th>
+      <th>DNI</th>
+      <th>Apellido</th>
+      <th>Dirección</th>
+      <th>Fecha</th>
+      <th>Teléfono</th>
+      <th>Observaciones</th>
+      <th>Documento</th>
+      <th>Mapa</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+
+<script>
+  const supabaseClient = supabase.createClient(supabaseUrl, supabaseAnonKey);
+
+  async function cargarFamilias() {
+    const { data, error } = await supabaseClient.from("familias").select("*").order("id", { ascending: false });
+    const tbody = document.querySelector("#familiasTable tbody");
+    tbody.innerHTML = "";
+
+    if (error) {
+      console.error(error);
+      tbody.innerHTML = "<tr><td colspan='9'>Error al cargar datos</td></tr>";
+      return;
+    }
+
+    data.forEach(f => {
+      const fila = document.createElement("tr");
+      const mapaURL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(f.direccion || "")}`;
+      fila.innerHTML = `
+        <td>${f.nombres_apellidos || ""}</td>
+        <td>${f.dni_solicitante || ""}</td>
+        <td>${f.apellido_familia || ""}</td>
+        <td>${f.direccion || ""}</td>
+        <td>${f.fecha_registro || ""}</td>
+        <td>${f.telefono_contacto || ""}</td>
+        <td>${f.observaciones || ""}</td>
+        <td>${f.archivo_url ? `<a href="${f.archivo_url}" target="_blank">📎 Ver</a>` : ""}</td>
+        <td>${f.direccion ? `<a href="${mapaURL}" target="_blank">🗺️ Mapa</a>` : ""}</td>
+      `;
+      tbody.appendChild(fila);
+    });
+  }
+
+  document.getElementById("search").addEventListener("input", function () {
+    const filtro = this.value.toLowerCase();
+    document.querySelectorAll("#familiasTable tbody tr").forEach(row => {
+      row.style.display = [...row.children].some(td =>
+        td.textContent.toLowerCase().includes(filtro)
+      ) ? "" : "none";
+    });
+  });
+
+  window.onload = cargarFamilias;
+</script>
+
+</body>
+</html>
