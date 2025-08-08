@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
   "name": "caritas-cnc-backend",
   "version": "1.0.0",
@@ -32,3 +33,39 @@
     "nodemon": "^3.0.2"
   }
 }
+=======
+{
+  "name": "caritas-cnc-backend",
+  "version": "1.0.0",
+  "description": "API y servidor para la app Cáritas CNC con registro de familias, autenticación Firebase, almacenamiento Supabase y soporte PWA.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [
+    "express",
+    "supabase",
+    "firebase",
+    "multer",
+    "pwa",
+    "nodejs",
+    "backend"
+  ],
+  "author": "Luis Kiode",
+  "license": "MIT",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.8",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "multer": "^2.0.2",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}
+>>>>>>> 7ef59d9 (Frontend organizado y funcional en carpeta frontend)

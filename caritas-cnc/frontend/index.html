@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cáritas CNC - Registro de Familias</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#b71c1c">
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header>Cáritas CNC - Registro y Listado de Familias</header>
+
+<nav>
+    <button onclick="showSection('inicio')">Inicio</button>
+    <button onclick="showSection('registro')">Registro</button>
+    <button onclick="showSection('contacto')">Contacto</button>
+</nav>
+
+<section id="inicio" class="active">
+    <h2>Bienvenido</h2>
+    <p>Registra y gestiona familias beneficiarias de Cáritas CNC.</p>
+    <br />
+    <button class="submit-btn" onclick="goToListado()">📋 Ver Listado de Familias</button>
+</section>
+
+<section id="registro">
+    <h2>Registro de Familias</h2>
+    <div id="msg"></div>
+    <form id="familiaForm" enctype="multipart/form-data">
+        <label>Nombres y Apellidos*</label>
+        <input type="text" name="nombres_apellidos" required />
+        <label>DNI*</label>
+        <input type="text" name="dni_solicitante" maxlength="8" pattern="[0-9]{8}" required />
+        <label>Apellido Familia*</label>
+        <input type="text" name="apellido_familia" required />
+        <label>Fecha de Registro*</label>
+        <input type="date" name="fecha_registro" required />
+        <label>Teléfono*</label>
+        <input type="text" name="telefono_contacto" pattern="[0-9]+" required />
+        <label>Observaciones</label>
+        <textarea name="observaciones"></textarea>
+        <label>Adjuntar documento</label>
+        <input type="file" name="archivo" accept=".pdf,.jpg,.png" />
+        <label><input type="checkbox" required> Acepto los términos y condiciones</label>
+        <button type="submit" class="submit-btn">Registrar</button>
+    </form>
+</section>
+
+<section id="listado" style="display:none;">
+    <h2>Listado de Familias</h2>
+    <input type="text" id="search" placeholder="Buscar familia...">
+    <table id="familiasTable">
+        <thead>
+            <tr>
+                <th>Nombres</th>
+                <th>DNI</th>
+                <th>Apellido</th>
+                <th>Fecha</th>
+                <th>Teléfono</th>
+                <th>Observaciones</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <br />
+    <button class="submit-btn" onclick="logout()">Cerrar Sesión</button>
+</section>
+
+<section id="contacto">
+    <h2>Contacto</h2>
+    <p>Email: contacto@caritas.org</p>
+    <p>Teléfono: +51 999 888 777</p>
+</section>
+
+<footer>
+    © 2025 Cáritas CNC. Todos los derechos reservados.
+</footer>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+
+<script>
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const supabaseClient = supabase.createClient(supabaseUrl, supabaseAnonKey);
+
+  function showSection(id) {
+    document.querySelectorAll("section").forEach((sec) => sec.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+  }
+
+  function goToListado() {
+    if (auth.currentUser) {
+      loadFamilias();
+      showSection("listado");
+    } else {
+      window.location.href = "login.html";
+    }
+  }
+
+  document.getElementById("familiaForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const msgDiv = document.getElementById("msg");
+    msgDiv.innerHTML = "";
+    const formData = new FormData(this);
+    try {
+      const res = await fetch("https://api-familias.onrender.com/familias", { method: "POST", body: formData });
+      const data = await res.json();
+      if (res.ok) {
+        msgDiv.innerHTML = "<div class='success'>✅ Registro exitoso</div>";
+        this.reset();
+      } else {
+        msgDiv.innerHTML = `<div class='error'>❌ Error: ${data.error || "No se pudo registrar"}</div>`;
+      }
+    } catch {
+      msgDiv.innerHTML = "<div class='error'>❌ No se pudo conectar</div>";
+    }
+  });
+
+  async function loadFamilias() {
+    const { data, error } = await supabaseClient.from("familias").select("*");
+    const tbody = document.querySelector("#familiasTable tbody");
+    tbody.innerHTML = "";
+    if (error) {
+      tbody.innerHTML = `<tr><td colspan="6">Error al cargar</td></tr>`;
+    } else {
+      data.forEach((f) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${f.nombres_apellidos || ""}</td>
+          <td>${f.dni_solicitante || ""}</td>
+          <td>${f.apellido_familia || ""}</td>
+          <td>${f.fecha_registro || ""}</td>
+          <td>${f.telefono_contacto || ""}</td>
+          <td>${f.observaciones || ""}</td>`;
+        tbody.appendChild(tr);
+      });
+    }
+  }
+
+  document.getElementById("search").addEventListener("input", function () {
+    const filter = this.value.toLowerCase();
+    document.querySelectorAll("#familiasTable tbody tr").forEach(row => {
+      row.style.display = row.innerText.toLowerCase().includes(filter) ? "" : "none";
+    });
+  });
+
+  function logout() {
+    auth.signOut().then(() => {
+      showSection("inicio");
+    });
+  }
+
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("service-worker.js");
+  }
+</script>
+
+</body>
+</html>
