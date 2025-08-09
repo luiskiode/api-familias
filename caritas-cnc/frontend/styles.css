@@ -1,177 +1,231 @@
-/* General */
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #b71c1c;
+/* ================================
+   Estilos generales – Cáritas CNC
+   ================================ */
+
+* { box-sizing: border-box; }
+
+:root{
+  --rojo:#b71c1c;
+  --rojo-osc:#9e1515;
+  --blanco:#ffffff;
+  --gris:#333;
+  --gris-2:#666;
+  --gris-borde:#e5e5e5;
+  --sombra: 0 6px 14px rgba(0,0,0,.15);
+  --sombra-sm: 0 3px 8px rgba(0,0,0,.12);
+}
+
+/* Fondo rojo texturizado y fijo */
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  color: var(--gris);
+  background-color: var(--rojo);
   background-image:
-    linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px),
-    linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
-  background-size: 20px 20px;
-  color: white;
-  padding-bottom: 60px;
+    linear-gradient(45deg, rgba(255,255,255,.06) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255,255,255,.06) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(255,255,255,.06) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(255,255,255,.06) 75%);
+  background-size: 8px 8px;
+  background-position: 0 0, 0 4px, 4px -4px, -4px 0;
+  background-attachment: fixed;
 }
 
-/* Encabezado */
-header {
-  background: rgba(0,0,0,0.2);
-  padding: 10px;
-  text-align: center;
-  font-size: 1.5em;
-  font-weight: bold;
-}
+/* ================================
+   Header: título centrado + menú abajo
+   ================================ */
 
-/* Menú */
-nav {
+.app-header{
+  background-color: var(--rojo);
+  color: var(--blanco);
+  padding: 1rem 1.25rem;
   display: flex;
+  flex-direction: column;     /* título arriba, menú abajo */
+  align-items: center;
   justify-content: center;
-  background: rgba(0,0,0,0.3);
-  flex-wrap: wrap;
-}
-nav button {
-  background: none;
-  border: none;
-  color: white;
-  padding: 14px 20px;
-  cursor: pointer;
-  font-size: 1em;
-  position: relative;
-  transition: all 0.3s ease;
-}
-nav button:hover {
-  background: rgba(255,255,255,0.15);
-  transform: scale(1.05);
+  gap: .75rem;
+  position: sticky;           /* se queda arriba si haces scroll largo */
+  top: 0;
+  z-index: 10;
 }
 
-/* Secciones */
-section {
-  display: none;
-  padding: 20px;
-  max-width: 900px;
-  margin: auto;
+.app-header h1{
+  margin:0;
+  text-align:center;
+  letter-spacing:.3px;
 }
-section.active {
-  display: block;
+
+/* Menú centrado */
+.app-header nav,
+nav{
+  display:flex;
+  gap:.75rem;
+  flex-wrap:wrap;
+  justify-content:center;
 }
+
+/* Botones con animación */
+nav button{
+  background: var(--blanco);
+  color: var(--rojo);
+  border: none;
+  padding: .5rem .9rem;
+  border-radius: .5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease, background-color .2s ease, color .2s ease;
+  box-shadow: 0 0 0 rgba(0,0,0,0);
+}
+nav button:hover{
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: var(--sombra);
+}
+nav button:active{
+  transform: translateY(0) scale(.99);
+  box-shadow: var(--sombra-sm);
+}
+nav button:focus-visible{
+  outline: 2px solid var(--blanco);
+  outline-offset: 2px;
+}
+
+/* Reutiliza animación para otros botones (formularios, etc.) */
+button.submit-btn{
+  background: var(--rojo);
+  color: var(--blanco);
+  border: none;
+  padding: .65rem 1rem;
+  border-radius: .5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease, background-color .2s ease;
+}
+button.submit-btn:hover{ transform: translateY(-2px); box-shadow: var(--sombra); }
+button.submit-btn:active{ transform: translateY(0); box-shadow: var(--sombra-sm); }
+button.submit-btn:disabled{ opacity:.6; cursor:not-allowed; }
+
+/* ================================
+   Contenido / secciones
+   ================================ */
+
+section{
+  background: #fff;
+  margin: 1rem auto;
+  padding: 1rem 1.25rem;
+  border-radius: .75rem;
+  max-width: 1100px;
+  box-shadow: 0 1px 0 rgba(0,0,0,.03);
+}
+
+/* Sistema de visibilidad por clases */
+.seccion{ display:none; }
+.seccion.active{ display:block; }
+
+/* Títulos */
+h2{ margin: .25rem 0 .75rem; }
+h3{ margin: .25rem 0 .5rem; }
 
 /* Formularios */
-input, textarea {
-  width: 100%;
-  padding: 8px;
-  margin: 6px 0 12px;
-  border: none;
-  border-radius: 5px;
-  font-size: 1em;
+form label{ display:block; font-weight:600; margin:.6rem 0 .25rem; }
+form input, form textarea, form select{
+  width:100%;
+  padding:.55rem .65rem;
+  border:1px solid var(--gris-borde);
+  border-radius:.5rem;
+  outline:none;
 }
-input[type="date"], input[type="email"], input[type="password"] {
-  color: black;
-}
-button.submit-btn {
-  background: white;
-  color: #b71c1c;
-  padding: 10px 20px;
-  border: none;
-  font-size: 1em;
-  cursor: pointer;
-  border-radius: 5px;
-  transition: all 0.3s ease;
-}
-button.submit-btn:hover {
-  background: #ffcdd2;
-  transform: scale(1.05);
-}
+form textarea{ min-height:100px; resize:vertical; }
+#msg .success{ color:#0a7b2e; font-weight:600; margin-top:.5rem; }
+#msg .error{ color:#b00020; font-weight:600; margin-top:.5rem; }
 
-/* Tabla en modo oscuro */
-#listado table {
-  width: 100%;
+/* Tablas (familias y pendientes) */
+table{
   border-collapse: collapse;
-  background: black;
-  color: white;
+  width:100%;
+  background:#fff;
+  border-radius:.5rem;
+  overflow:hidden;
 }
-#listado th, #listado td {
-  padding: 10px;
-  border: 1px solid #444;
-  text-align: left;
+thead{ background:#f7f7f7; }
+th, td{
+  border:1px solid var(--gris-borde);
+  padding:.55rem .6rem;
+  text-align:left;
+  vertical-align: top;
 }
-#listado a {
-  color: #ff6666;
-  text-decoration: underline;
-}
-#listado a:hover {
-  color: #ff9999;
-}
+tbody tr:hover{ background:#fafafa; }
 
-/* Buscador */
-#search {
+/* Inventario embebido (Google Sheets/Excel Online) */
+.inventory-frame{
   width: 100%;
-  padding: 8px;
-  margin-bottom: 10px;
-  border: none;
-  border-radius: 5px;
-  color: black;
+  min-height: 420px;
+  border: 1px solid var(--gris-borde);
+  border-radius: .5rem;
+  background: #fff;
 }
 
-/* Mensajes */
-.success {
-  background: #4caf50;
-  padding: 10px;
-  border-radius: 5px;
-  margin-bottom: 10px;
-}
-.error {
-  background: #f44336;
-  padding: 10px;
-  border-radius: 5px;
-  margin-bottom: 10px;
+/* ================================
+   Login
+   ================================ */
+
+.login-body{
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:1.25rem;
+  /* Capa clara sobre el patrón rojo para legibilidad */
+  background-color: rgba(255,255,255,.85);
+  background-blend-mode: lighten;
 }
 
-/* Login */
-.login-container {
-  max-width: 400px;
-  margin: 50px auto;
-  background: rgba(255,255,255,0.95);
-  color: black;
-  padding: 20px;
-  border-radius: 10px;
-  text-align: center;
+.login-container{
+  width:100%;
+  max-width:420px;
+  background:#fff;
+  padding:1.25rem 1.25rem 1rem;
+  border-radius:1rem;
+  box-shadow: var(--sombra);
 }
-.login-container input {
-  color: black;
+.login-container h1{
+  margin:.25rem 0 .25rem;
+  color: var(--rojo);
+  text-align:center;
+}
+.login-container h2{
+  margin:.25rem 0 1rem;
+  text-align:center;
+}
+.login-container form label{ margin-top:.65rem; }
+.login-container .submit-btn{ width:100%; margin-top:.9rem; }
+#loginMessage{ margin-top:.6rem; text-align:center; color:#b00020; }
+
+/* ================================
+   Footer (estático)
+   ================================ */
+
+footer{
+  background-color:#f5f5f5;
+  color: var(--gris-2);
+  font-size:.85rem;
+  padding: .9rem 1rem;
+  text-align:center;
+  border-top:1px solid var(--gris-borde);
+  position: static; /* ⬅️ No fijo; queda al final del contenido */
+  margin-top: 1rem;
+  max-width: 1100px;
+  border-radius: .5rem;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-/* Subpestañas */
-.subsection {
-  padding: 15px;
-  background: rgba(255,255,255,0.9);
-  color: black;
-  border-radius: 10px;
-  margin-top: 15px;
-}
+/* ================================
+   Responsivo
+   ================================ */
 
-/* Calendario */
-#calendar {
-  background: white;
-  color: black;
-  border-radius: 8px;
-  padding: 10px;
-}
-
-/* Mapa */
-#mapContainer {
-  margin-top: 15px;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-/* Footer */
-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background: rgba(0,0,0,0.6);
-  text-align: center;
-  padding: 10px 0;
-  color: white;
-  font-size: 0.9em;
-  z-index: 1000;
+@media (max-width: 640px){
+  section{ margin: .75rem .75rem; padding: .9rem; }
+  .app-header{ padding: .9rem; }
+  nav button{ padding: .45rem .75rem; }
 }
