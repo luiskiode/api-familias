@@ -129,12 +129,114 @@
       <div id="pendientesError" style="color:#b00020; margin-top:.5rem;"></div>
     </div>
 
-    <!-- CALENDARIO -->
-    <div id="agendamiento" class="subsection" style="display:none; margin-top:1rem;">
-      <h3>Agenda</h3>
-      <div id="calendar"></div>
-    </div>
-  </section>
+    <script>
+  // ----- Calendario con persistencia en Supabase -----
+  let calendar, calendarRendered = false;
+
+  function supaToFc(ev){
+    return { id: String(ev.id), title: ev.title, start: ev.start, end: ev.end || null };
+  }
+
+  async function fetchEventos(){
+    const { data, error } = await supabaseClient
+      .from('eventos')
+      .select('id, title, start, end')
+      .order('start', { ascending: true });
+    if (error) throw error;
+    return data.map(supaToFc);
+  }
+
+  async function createEvento({ title, start, end }){
+    const { data, error } = await supabaseClient
+      .from('eventos')
+      .insert([{ title, start, end }])
+      .select('id, title, start, end')
+      .single();
+    if (error) throw error;
+    return supaToFc(data);
+  }
+
+  async function updateEvento({ id, title, start, end }){
+    const { data, error } = await supabaseClient
+      .from('eventos')
+      .update({ title, start, end })
+      .eq('id', id)
+      .select('id, title, start, end')
+      .single();
+    if (error) throw error;
+    return supaToFc(data);
+  }
+
+  async function deleteEvento(id){
+    const { error } = await supabaseClient.from('eventos').delete().eq('id', id);
+    if (error) throw error;
+  }
+
+  async function initCalendar(){
+    const el = document.getElementById('calendar');
+    if (!el || !window.FullCalendar || calendarRendered) return;
+
+    const initialEvents = await fetchEventos().catch(e => { console.error(e); return []; });
+
+    calendar = new FullCalendar.Calendar(el, {
+      initialView: 'dayGridMonth',
+      height: 'auto',
+      selectable: true,
+      editable: true,
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+      },
+      events: initialEvents,
+
+      // Crear evento con click en día
+      dateClick: async (info) => {
+        const title = prompt('Título del evento:');
+        if (!title) return;
+        try {
+          const saved = await createEvento({ title, start: info.dateStr, end: null });
+          calendar.addEvent(saved);
+        } catch (e) { console.error(e); alert('No se pudo crear el evento'); }
+      },
+
+      // Editar arrastrando o redimensionando
+      eventDrop: async ({ event }) => {
+        try {
+          await updateEvento({
+            id: Number(event.id),
+            title: event.title,
+            start: event.start.toISOString(),
+            end: event.end ? event.end.toISOString() : null
+          });
+        } catch (e) { console.error(e); alert('No se pudo actualizar el evento'); event.revert(); }
+      },
+      eventResize: async ({ event }) => {
+        try {
+          await updateEvento({
+            id: Number(event.id),
+            title: event.title,
+            start: event.start.toISOString(),
+            end: event.end ? event.end.toISOString() : null
+          });
+        } catch (e) { console.error(e); alert('No se pudo actualizar el evento'); event.revert(); }
+      },
+
+      // Borrar con click
+      eventClick: async ({ event }) => {
+        if (!confirm(`Eliminar evento: "${event.title}"?`)) return;
+        try {
+          await deleteEvento(Number(event.id));
+          event.remove();
+        } catch (e) { console.error(e); alert('No se pudo eliminar el evento'); }
+      }
+    });
+
+    calendar.render();
+    calendarRendered = true;
+  }
+</script>
+
 
   <footer>© 2025 Cáritas CNC. Todos los derechos reservados.</footer>
 

@@ -229,3 +229,4 @@ footer{
   .app-header{ padding: .9rem; }
   nav button{ padding: .45rem .75rem; }
 }
+#calendar { background:#fff; border-radius:.75rem; padding: .75rem; }
