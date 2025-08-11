@@ -1,240 +1,191 @@
-/* ================================
-   Estilos generales – Cáritas CNC
-   ================================ */
-
-* { box-sizing: border-box; }
-
+/* =========
+   Paleta & base
+   ========= */
 :root{
-  --rojo:#b71c1c;
-  --rojo-osc:#9e1515;
-  --blanco:#ffffff;
-  --gris:#333;
-  --gris-2:#666;
-  --gris-borde:#e5e5e5;
-  --sombra: 0 6px 14px rgba(0,0,0,.15);
-  --sombra-sm: 0 3px 8px rgba(0,0,0,.12);
+  --red-1:#b71c1c; /* rojo principal */
+  --red-2:#8f1316; /* rojo oscuro */
+  --red-3:#d32f2f; /* rojo vivo para hover */
+  --bg-1:#fff4f4;  /* fondo muy suave */
+  --card:#ffffff;
+  --text:#1b1b1b;
+  --muted:#616b74;
+  --border:#e7e7e7;
+  --border2:#dedede;
+  --ok:#16a34a;
+  --err:#dc2626;
 }
 
-/* Fondo rojo texturizado y fijo */
+*{box-sizing:border-box}
+html,body{height:100%}
 body{
   margin:0;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
-  color: var(--gris);
-  background-color: var(--rojo);
-  background-image:
-    linear-gradient(45deg, rgba(255,255,255,.06) 25%, transparent 25%),
-    linear-gradient(-45deg, rgba(255,255,255,.06) 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, rgba(255,255,255,.06) 75%),
-    linear-gradient(-45deg, transparent 75%, rgba(255,255,255,.06) 75%);
-  background-size: 8px 8px;
-  background-position: 0 0, 0 4px, 4px -4px, -4px 0;
-  background-attachment: fixed;
+  font-family:system-ui, Segoe UI, Roboto, Ubuntu, Arial, sans-serif;
+  background:linear-gradient(180deg, var(--red-1), var(--red-2) 60%);
+  color:var(--text);
 }
 
-/* Reduce costo en móviles: fondo liso */
-@media (max-width: 480px){
-  body{ background-image: none; }
-}
-
-/* ================================
-   Header: título centrado + menú abajo
-   ================================ */
-
+/* =========
+   Header + nav
+   ========= */
 .app-header{
-  background-color: var(--rojo);
-  color: var(--blanco);
-  padding: 1rem 1.25rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: .75rem;
-  position: sticky;
-  top: 0;
-  z-index: 10;
+  position:sticky; top:0; z-index:10;
+  background:rgba(183,28,28,.95);
+  border-bottom:1px solid rgba(255,255,255,.25);
+  color:#fff;
+  padding:.8rem 1rem;
+  display:flex; gap:1rem; align-items:center; flex-wrap:wrap;
 }
-
 .app-header h1{
-  margin:0;
-  text-align:center;
-  letter-spacing:.3px;
+  margin:0; font-size:1.6rem; font-weight:800; letter-spacing:.2px;
 }
+.app-header nav{display:flex; gap:.5rem; flex-wrap:wrap}
+.app-header nav button{
+  appearance:none; border:1px solid rgba(255,255,255,.35);
+  background:transparent; color:#fff; font-weight:600;
+  padding:.5rem .8rem; border-radius:999px; cursor:pointer;
+  transition:background .15s ease, transform .05s ease, opacity .15s ease;
+}
+.app-header nav button:hover{ background:rgba(255,255,255,.12) }
+.app-header nav button:active{ transform:translateY(1px) }
 
-/* Menú centrado */
-.app-header nav,
-nav{
-  display:flex;
-  gap:.75rem;
-  flex-wrap:wrap;
-  justify-content:center;
-}
-
-/* Botones con animación */
-nav button{
-  background: var(--blanco);
-  color: var(--rojo);
-  border: none;
-  padding: .5rem .9rem;
-  border-radius: .5rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform .15s ease, box-shadow .15s ease, background-color .2s ease, color .2s ease;
-  box-shadow: 0 0 0 rgba(0,0,0,0);
-}
-nav button:hover{
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: var(--sombra);
-}
-nav button:active{
-  transform: translateY(0) scale(.99);
-  box-shadow: var(--sombra-sm);
-}
-nav button:focus-visible{
-  outline: 2px solid var(--blanco);
-  outline-offset: 2px;
-}
-
-/* Reutiliza animación para otros botones (formularios, etc.) */
-button.submit-btn{
-  background: var(--rojo);
-  color: var(--blanco);
-  border: none;
-  padding: .65rem 1rem;
-  border-radius: .5rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform .15s ease, box-shadow .15s ease, background-color .2s ease;
-}
-button.submit-btn:hover{ transform: translateY(-2px); box-shadow: var(--sombra); }
-button.submit-btn:active{ transform: translateY(0); box-shadow: var(--sombra-sm); }
-button.submit-btn:disabled{ opacity:.6; cursor:not-allowed; }
-
-/* ================================
-   Contenido / secciones
-   ================================ */
-
-section{
-  background: #fff;
-  margin: 1rem auto;
-  padding: 1rem 1.25rem;
-  border-radius: .75rem;
-  max-width: 1100px;
-  box-shadow: 0 1px 0 rgba(0,0,0,.03);
-}
-
-/* Sistema de visibilidad por clases */
-.seccion{ display:none; }
+/* =========
+   Secciones
+   ========= */
+.seccion{ display:none; padding:1rem; }
 .seccion.active{ display:block; }
 
-/* Títulos */
-h2{ margin: .25rem 0 .75rem; }
-h3{ margin: .25rem 0 .5rem; }
+h2{ margin:.2rem 0 1rem; font-size:1.25rem; }
+.row{ display:flex; gap:.5rem; align-items:center; }
+.row>*{ flex:1 }
 
-/* Formularios */
-form label{ display:block; font-weight:600; margin:.6rem 0 .25rem; }
-form input, form textarea, form select{
-  width:100%;
-  padding:.55rem .65rem;
-  border:1px solid var(--gris-borde);
-  border-radius:.5rem;
-  outline:none;
+/* =========
+   Tarjetas, tablas, formularios
+   ========= */
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:1rem;
+  box-shadow:0 8px 20px rgba(0,0,0,.06);
 }
-form textarea{ min-height:100px; resize:vertical; }
-#msg .success{ color:#0a7b2e; font-weight:600; margin-top:.5rem; }
-#msg .error{ color:#b00020; font-weight:600; margin-top:.5rem; }
 
-/* Tablas (familias y pendientes) */
+/* Inputs */
+input, textarea, select{
+  width:100%;
+  padding:.75rem .85rem;
+  border-radius:12px;
+  border:1px solid var(--border2);
+  background:#fff;
+  color:var(--text);
+  font:inherit;
+}
+textarea{ min-height:110px; resize:vertical }
+
+/* Botones principales */
+.submit-btn, button.submit-btn{
+  appearance:none; border:none; cursor:pointer;
+  background:linear-gradient(180deg, var(--red-1), var(--red-3));
+  color:#fff; font-weight:700; letter-spacing:.2px;
+  padding:.7rem 1rem; border-radius:12px;
+  transition:filter .15s ease, transform .05s ease, box-shadow .15s ease;
+  box-shadow:0 6px 14px rgba(183,28,28,.25);
+}
+.submit-btn:hover{ filter:brightness(1.03) }
+.submit-btn:active{ transform:translateY(1px) }
+
+/* Mensajes */
+.success{
+  margin:.6rem 0; padding:.6rem .8rem; border-radius:10px;
+  background:#e6f7ec; color:#0f5132; border:1px solid #b7e1c5;
+}
+.error{
+  margin:.6rem 0; padding:.6rem .8rem; border-radius:10px;
+  background:#fde8e8; color:#7f1d1d; border:1px solid #f5c2c7;
+}
+
+/* Tablas (listado/pendientes) */
 table{
-  border-collapse: collapse;
-  width:100%;
-  background:#fff;
-  border-radius:.5rem;
-  overflow:hidden;
+  width:100%; border-collapse:separate; border-spacing:0 8px;
 }
-thead{ background:#f7f7f7; }
-th, td{
-  border:1px solid var(--gris-borde);
-  padding:.55rem .6rem;
-  text-align:left;
-  vertical-align: top;
+thead th{
+  text-align:left; font-size:.9rem; color:var(--muted);
+  padding:.4rem .6rem;
 }
-tbody tr:hover{ background:#fafafa; }
-/* Zebra striping */
-tbody tr:nth-child(even){ background:#fcfcfc; }
+tbody tr{
+  background:#fff; border:1px solid var(--border2);
+  box-shadow:0 2px 8px rgba(0,0,0,.03);
+}
+tbody td{
+  padding:.6rem; vertical-align:middle;
+}
+tbody td:first-child{ border-top-left-radius:10px; border-bottom-left-radius:10px }
+tbody td:last-child{ border-top-right-radius:10px; border-bottom-right-radius:10px }
 
-/* Inventario embebido (Google Sheets/Excel Online) */
-.inventory-frame{
-  width: 100%;
-  min-height: 420px;
-  border: 1px solid var(--gris-borde);
-  border-radius: .5rem;
-  background: #fff;
+/* Botón borrar fila de pendientes */
+#pendientesTable button{
+  appearance:none; border:1px solid var(--border2);
+  background:#fff; color:#333; padding:.45rem .7rem;
+  border-radius:10px; cursor:pointer;
+}
+#pendientesTable button:hover{ background:#f7f7f7 }
+
+/* =========
+   Mapa (Leaflet) + calendario
+   ========= */
+#map{
+  height:320px;
+  border-radius:14px;
+  border:1px solid var(--border);
+  background:#f6f7f9;
+}
+.leaflet-container{ border-radius:14px; }
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{
+  background:#fff; color:var(--text); border:1px solid var(--border2);
+}
+.leaflet-control-zoom a{
+  background:#fff; color:var(--text); border:1px solid var(--border2);
+}
+.leaflet-control-zoom a:hover{ background:#f4f4f4 }
+
+/* FullCalendar contenedor */
+#calendar{
+  background:#fff; border:1px solid var(--border);
+  border-radius:14px; padding:.5rem;
+  box-shadow:0 8px 18px rgba(0,0,0,.05);
 }
 
-/* ================================
-   Login
-   ================================ */
-
-.login-body{
-  margin:0;
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:1.25rem;
-  background-color: rgba(255,255,255,.85);
-  background-blend-mode: lighten;
-}
-
-.login-container{
-  width:100%;
-  max-width:420px;
-  background:#fff;
-  padding:1.25rem 1.25rem 1rem;
-  border-radius:1rem;
-  box-shadow: var(--sombra);
-}
-.login-container h1{
-  margin:.25rem 0 .25rem;
-  color: var(--rojo);
-  text-align:center;
-}
-.login-container h2{
-  margin:.25rem 0 1rem;
-  text-align:center;
-}
-.login-container form label{ margin-top:.65rem; }
-.login-container .submit-btn{ width:100%; margin-top:.9rem; }
-#loginMessage{ margin-top:.6rem; text-align:center; color:#b00020; }
-
-/* ================================
-   Footer (estático)
-   ================================ */
-
+/* =========
+   Footer
+   ========= */
 footer{
-  background-color:#f5f5f5;
-  color: var(--gris-2);
-  font-size:.85rem;
-  padding: .9rem 1rem;
-  text-align:center;
-  border-top:1px solid var(--gris-borde);
-  position: static;
-  margin-top: 1rem;
-  max-width: 1100px;
-  border-radius: .5rem;
-  margin-left: auto;
-  margin-right: auto;
+  color:#fff; text-align:center; padding:1.2rem .8rem;
+  border-top:1px solid rgba(255,255,255,.15);
+  margin-top:1rem;
 }
 
-/* ================================
-   Responsivo
-   ================================ */
+/* =========
+   Utilidades
+   ========= */
+.muted{ color:var(--muted); }
+.hidden{ display:none !important; }
 
-@media (max-width: 640px){
-  section{ margin: .75rem .75rem; padding: .9rem; }
-  .app-header{ padding: .9rem; }
-  nav button{ padding: .45rem .75rem; }
+/* =========
+   Responsive
+   ========= */
+@media (max-width: 880px){
+  .app-header{ justify-content:space-between }
+  .app-header nav{ width:100% }
+  .row{ flex-direction:column }
+  thead{ display:none }
+  table, tbody, tr, td{ display:block; width:100% }
+  tbody tr{ margin-bottom:.6rem }
+  tbody td{ padding:.45rem .6rem }
+  tbody td::before{
+    content:attr(data-label);
+    display:block; font-size:.8rem; color:var(--muted); margin-bottom:.15rem;
+  }
 }
-
-/* Calendario */
-#calendar { background:#fff; border-radius:.75rem; padding: .75rem; }
+/* asegura espacio visible para el calendario */
+#calendar {
+  min-height: 520px;   /* fuerza alto razonable */
+}
