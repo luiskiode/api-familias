@@ -6,26 +6,29 @@
   <title>Cáritas CNC – Gestión</title>
 
   <!-- Estilos globales -->
-  <link rel="stylesheet" href="styles.css?v=1" />
+  <link rel="stylesheet" href="styles.css?v=3" />
 
   <!-- PWA opcional -->
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#b71c1c" />
 
   <!-- Firebase (compat) y config -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-  <script src="firebase-config.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script defer src="firebase-config.js"></script>
 
   <!-- Supabase SDK -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-config.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="supabase-config.js"></script>
 
-  <!-- FullCalendar (LOCAL) -->
-  <link href="./vendor/fullcalendar/main.min.css" rel="stylesheet" />
-  <script src="./vendor/fullcalendar/index.global.min.js"></script>
+  <!-- FullCalendar CSS (CDN fiable) -->
+  <link href="https://unpkg.com/@fullcalendar/core@6.1.8/index.global.css" rel="stylesheet" />
+  <link href="https://unpkg.com/@fullcalendar/daygrid@6.1.8/index.global.css" rel="stylesheet" />
 
-  <!-- Leaflet (solo CSS; el JS va al final) -->
+  <!-- FullCalendar JS (LOCAL) -->
+  <script defer src="./vendor/fullcalendar/index.global.min.js"></script>
+
+  <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin />
 </head>
 
@@ -260,7 +263,7 @@
     }
   }
 
-  // --- Registro (a tu API Render)
+  // --- Registro (API Render)
   document.getElementById('familiaForm').addEventListener('submit', async function(e){
     e.preventDefault();
     const msgDiv = document.getElementById('msg');
@@ -444,8 +447,7 @@
   document.getElementById('fam-refresh').addEventListener('click', loadFamiliasAdmin);
   document.getElementById('fam-search').addEventListener('input', renderFamiliasAdmin);
 
-  // --- Calendario (LOCAL + CRUD Supabase)
-  // Mapea filas de la tabla 'eventos' a objetos FullCalendar
+  // --- Calendario (LOCAL JS + CSS por CDN fiable) con CRUD Supabase
   function mapEventoToFC(row){
     return {
       id: row.id,
@@ -458,7 +460,6 @@
 
   async function fcEventSource(info, success, failure){
     try {
-      // Si prefieres filtrar por rango: añade .gte('fecha_inicio', info.startStr).lte('fecha_inicio', info.endStr)
       const cols = 'id, titulo, fecha_inicio, fecha_fin, all_day';
       const { data, error } = await supabaseClient
         .from('eventos')
