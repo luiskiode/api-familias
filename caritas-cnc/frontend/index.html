@@ -6,77 +6,86 @@
   <title>Cáritas CNC – Gestión</title>
 
   <!-- Estilos globales -->
-  <link rel="stylesheet" href="styles.css?v=1" />
+  <link rel="stylesheet" href="styles.css?v=2" />
 
   <!-- PWA opcional -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#b71c1c">
 
-  <!-- Firebase (compat) y config (NO volver a inicializar aquí) -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-  <script src="firebase-config.js"></script>
+  <!-- Firebase (compat v10) y config (no re-inicializar aquí). Cargar en diferido -->
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script defer src="firebase-config.js"></script>
 
-  <!-- Supabase SDK (para crear cliente) + config con url/anon key -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-config.js"></script>
+  <!-- Supabase SDK v2 + config con url/anon key (diferido) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="supabase-config.js"></script>
 
   <!-- FullCalendar -->
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
 </head>
 
 <body>
-  <header class="app-header">
+  <header class="app-header" role="banner">
     <h1>Cáritas CNC</h1>
-    <nav>
+    <nav aria-label="Navegación principal">
       <button type="button" onclick="showSection('inicio')">Inicio</button>
       <button type="button" onclick="showSection('registro')">Registro</button>
+      <button type="button" onclick="showSection('listado')">Listado</button>
       <button type="button" onclick="showSection('contacto')">Contacto</button>
       <button type="button" onclick="showSection('administracion')">Administración</button>
-      <button type="button" onclick="goLogin()">Iniciar sesión</button>
-      <button type="button" onclick="logout()">Cerrar sesión</button>
+      <button type="button" onclick="goLogin()" aria-label="Ir a iniciar sesión">Iniciar sesión</button>
+      <button type="button" onclick="logout()" aria-label="Cerrar sesión">Cerrar sesión</button>
     </nav>
   </header>
 
   <!-- INICIO -->
-  <section id="inicio" class="seccion active">
-    <h2>Bienvenido ❤️</h2>
+  <section id="inicio" class="seccion active" aria-labelledby="titulo-inicio">
+    <h2 id="titulo-inicio">Bienvenido ❤️</h2>
     <p>Gracias por usar <b>Cáritas CNC</b> para ayudar a las familias necesitadas. Desde aquí puedes registrar nuevas familias, consultar el listado existente y gestionar tareas internas del grupo.</p>
     <br>
     <button class="submit-btn" type="button" onclick="showSection('listado')">📋 Ver Listado de Familias</button>
   </section>
 
   <!-- REGISTRO -->
-  <section id="registro" class="seccion">
-    <h2>Registro de Familias</h2>
-    <div id="msg"></div>
-    <form id="familiaForm" enctype="multipart/form-data">
-      <label>Nombres y Apellidos*</label>
-      <input type="text" name="nombres_apellidos" required />
-      <label>DNI*</label>
-      <input type="text" name="dni_solicitante" maxlength="8" pattern="[0-9]{8}" required />
-      <label>Apellido Familia*</label>
-      <input type="text" name="apellido_familia" required />
-      <label>Dirección*</label>
-      <input type="text" name="direccion" required />
-      <label>Fecha de Registro*</label>
-      <input type="date" name="fecha_registro" required />
-      <label>Teléfono*</label>
-      <input type="text" name="telefono_contacto" pattern="[0-9]+" required />
-      <label>Observaciones</label>
-      <textarea name="observaciones"></textarea>
-      <label>Adjuntar documento</label>
-      <input type="file" name="archivo" accept=".pdf,.jpg,.png" />
-      <label><input type="checkbox" required> Acepto los términos y condiciones</label>
+  <section id="registro" class="seccion" aria-labelledby="titulo-registro">
+    <h2 id="titulo-registro">Registro de Familias</h2>
+    <div id="msg" role="status" aria-live="polite"></div>
+    <form id="familiaForm" enctype="multipart/form-data" novalidate>
+      <label for="inpNombre">Nombres y Apellidos*</label>
+      <input id="inpNombre" autocomplete="name" type="text" name="nombres_apellidos" required />
+
+      <label for="inpDni">DNI*</label>
+      <input id="inpDni" inputmode="numeric" autocomplete="off" type="text" name="dni_solicitante" maxlength="8" pattern="[0-9]{8}" required />
+
+      <label for="inpApellido">Apellido Familia*</label>
+      <input id="inpApellido" type="text" name="apellido_familia" required />
+
+      <label for="inpDireccion">Dirección*</label>
+      <input id="inpDireccion" autocomplete="street-address" type="text" name="direccion" required />
+
+      <label for="inpFecha">Fecha de Registro*</label>
+      <input id="inpFecha" type="date" name="fecha_registro" required />
+
+      <label for="inpTelefono">Teléfono*</label>
+      <input id="inpTelefono" inputmode="tel" autocomplete="tel" type="text" name="telefono_contacto" pattern="[0-9]+" required />
+
+      <label for="inpObs">Observaciones</label>
+      <textarea id="inpObs" name="observaciones"></textarea>
+
+      <label for="inpArchivo">Adjuntar documento</label>
+      <input id="inpArchivo" type="file" name="archivo" accept=".pdf,.jpg,.png" />
+
+      <label><input id="inpTyC" type="checkbox" required> Acepto los términos y condiciones</label>
       <button type="submit" class="submit-btn">Registrar</button>
     </form>
   </section>
 
-  <!-- LISTADO (placeholder; conecta a tu API si quieres) -->
-  <section id="listado" class="seccion">
-    <h2>Listado de Familias</h2>
-    <p>Conéctalo a tu API en Render o Supabase según prefieras.</p>
+  <!-- LISTADO (conecta a tu API si está disponible) -->
+  <section id="listado" class="seccion" aria-labelledby="titulo-listado">
+    <h2 id="titulo-listado">Listado de Familias</h2>
+    <p id="familiasStatus" role="status" aria-live="polite">Conéctalo a tu API en Render o Supabase según prefieras.</p>
     <table id="familiasTable">
       <thead>
         <tr>
@@ -89,15 +98,15 @@
   </section>
 
   <!-- CONTACTO -->
-  <section id="contacto" class="seccion">
-    <h2>Contacto</h2>
+  <section id="contacto" class="seccion" aria-labelledby="titulo-contacto">
+    <h2 id="titulo-contacto">Contacto</h2>
     <p>Email: contacto@caritas.org</p>
     <p>Teléfono: +51 999 888 777</p>
   </section>
 
   <!-- ADMINISTRACIÓN -->
-  <section id="administracion" class="seccion">
-    <h2>Administración</h2>
+  <section id="administracion" class="seccion" aria-labelledby="titulo-admin">
+    <h2 id="titulo-admin">Administración</h2>
 
     <div style="display:flex; gap:.5rem; margin:.5rem 0;">
       <button type="button" class="submit-btn" onclick="showSubSection('pendientes')">✅ Pendientes de grupo</button>
@@ -129,7 +138,198 @@
       <div id="pendientesError" style="color:#b00020; margin-top:.5rem;"></div>
     </div>
 
-    <script>
+    <!-- AGENDAMIENTO / CALENDARIO -->
+    <div id="agendamiento" class="subsection" style="display:none; margin-top:1rem;">
+      <h3>Agenda</h3>
+      <div id="calendar" aria-label="Calendario de actividades"></div>
+    </div>
+  </section>
+
+  <footer>© 2025 Cáritas CNC. Todos los derechos reservados.</footer>
+
+  <!-- ================== JS inline ================== -->
+  <script>
+  // Utilidad para escapar HTML de celdas contenteditable
+  function escapeHTML(str){
+    return (str||"")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/\"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  // Crear cliente Supabase con variables globales del config
+  // Se espera que supabaseUrl y supabaseAnonKey estén definidos en supabase-config.js
+  const supabaseClient = (typeof supabase !== 'undefined' && typeof supabaseUrl !== 'undefined')
+    ? supabase.createClient(supabaseUrl, supabaseAnonKey)
+    : null;
+
+  // -------- Navegación / secciones --------
+  function showSection(id) {
+    document.querySelectorAll('.seccion').forEach(s => s.classList.remove('active'));
+    const el = document.getElementById(id);
+    if (el) el.classList.add('active');
+
+    // Acciones diferidas
+    if (id === 'administracion') { showSubSection('pendientes'); }
+    if (id === 'listado') { loadFamilias(); }
+  }
+
+  function showSubSection(id) {
+    document.querySelectorAll('.subsection').forEach(s => s.style.display = 'none');
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'block';
+
+    // Cargas diferidas
+    if (id === 'pendientes') loadPendientes();
+    if (id === 'agendamiento') initCalendar();
+  }
+
+  function goLogin(){ window.location.href = 'login.html'; }
+
+  function logout(){
+    if (window.firebase && firebase.apps?.length) {
+      firebase.auth().signOut().then(() => showSection('inicio'));
+    }
+  }
+
+  // -------- Registro familias (POST a tu API) --------
+  document.getElementById('familiaForm').addEventListener('submit', async function(e){
+    e.preventDefault();
+    const msgDiv = document.getElementById('msg');
+    msgDiv.innerHTML = '';
+    const formData = new FormData(this);
+    try {
+      const res = await fetch('https://api-familias.onrender.com/familias', { method:'POST', body: formData });
+      const data = await res.json().catch(()=>({}));
+      if (res.ok) {
+        msgDiv.innerHTML = "<div class='success'>✅ Registro exitoso</div>";
+        this.reset();
+      } else {
+        msgDiv.innerHTML = "<div class='error'>❌ Error al registrar</div>";
+        console.error('API /familias:', data);
+      }
+    } catch(err){
+      msgDiv.innerHTML = "<div class='error'>❌ No se pudo conectar</div>";
+      console.error(err);
+    }
+  });
+
+  // -------- Listado de familias (GET opcional) --------
+  async function loadFamilias(){
+    const tbody = document.querySelector('#familiasTable tbody');
+    const status = document.getElementById('familiasStatus');
+    if (!tbody) return;
+    status.textContent = '⏳ Cargando...';
+    try{
+      const res = await fetch('https://api-familias.onrender.com/familias');
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      const data = await res.json();
+      tbody.innerHTML = '';
+      (data||[]).forEach(f => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${escapeHTML(f.nombres_apellidos)}</td>
+          <td>${escapeHTML(f.dni_solicitante)}</td>
+          <td>${escapeHTML(f.apellido_familia)}</td>
+          <td>${escapeHTML(f.direccion)}</td>
+          <td>${escapeHTML(f.fecha_registro)}</td>
+          <td>${escapeHTML(f.telefono_contacto)}</td>
+          <td>${escapeHTML(f.observaciones)}</td>`;
+        tbody.appendChild(tr);
+      });
+      status.textContent = `✔ ${data?.length||0} registros`;
+    }catch(e){
+      console.warn('Listado no disponible:', e.message);
+      status.textContent = 'ℹ️ El listado requiere que el endpoint GET /familias esté disponible.';
+    }
+  }
+
+  // -------- Pendientes (editable con UPSERT) --------
+  function trPendiente({ id, descripcion = "", estado = false } = {}) {
+    const tr = document.createElement('tr');
+    if (id != null) tr.dataset.id = id;
+    tr.innerHTML = `
+      <td contenteditable="true">${escapeHTML(descripcion)}</td>
+      <td style="text-align:center;"><input type="checkbox" ${estado ? 'checked' : ''} aria-label="Marcar como hecho"></td>
+      <td style="text-align:center;"><button type="button" onclick="deletePendRow(this)" aria-label="Eliminar fila">🗑️</button></td>
+    `;
+    return tr;
+  }
+
+  function addPendRow(){
+    const tbody = document.querySelector('#pendientesTable tbody');
+    if (tbody) tbody.appendChild(trPendiente({ descripcion:"", estado:false }));
+  }
+
+  function deletePendRow(btn){
+    const tr = btn.closest('tr');
+    if (tr) tr.remove();
+  }
+
+  async function loadPendientes(){
+    const tbody = document.querySelector('#pendientesTable tbody');
+    const status = document.getElementById('pendientesStatus');
+    const err = document.getElementById('pendientesError');
+    if (!tbody || !supabaseClient) return;
+
+    status.textContent = '⏳ Cargando...'; err.textContent = '';
+    try {
+      const { data, error } = await supabaseClient
+        .from('pendientes')
+        .select('id, descripcion, estado')
+        .order('id', { ascending: true });
+      if (error) throw error;
+
+      tbody.innerHTML = '';
+      (data||[]).forEach(item => tbody.appendChild(trPendiente(item)));
+      status.textContent = `✔ ${data.length} tareas`;
+    } catch(e){
+      console.error('Error pendientes (load):', e);
+      err.textContent = 'No se pudieron cargar los pendientes. Verifica la tabla y las credenciales.';
+      status.textContent = '';
+    }
+  }
+
+  async function savePendientes(){
+    const tbody = document.querySelector('#pendientesTable tbody');
+    const status = document.getElementById('pendientesStatus');
+    const err = document.getElementById('pendientesError');
+    if (!tbody || !supabaseClient) return;
+
+    const rows = [...tbody.querySelectorAll('tr')];
+    const payload = rows.map(tr => {
+      const [tdDesc, tdCheck] = tr.children;
+      const id = tr.dataset.id ? Number(tr.dataset.id) : undefined;
+      const descripcion = (tdDesc.textContent || '').trim();
+      const estado = tdCheck.querySelector('input[type="checkbox"]').checked;
+      const obj = { descripcion, estado };
+      if (id) obj.id = id;
+      return obj;
+    });
+
+    status.textContent = '💾 Guardando...'; err.textContent = '';
+    try {
+      const { data, error } = await supabaseClient
+        .from('pendientes')
+        .upsert(payload, { onConflict: 'id' })
+        .select('id, descripcion, estado');
+      if (error) throw error;
+
+      // refrescar con IDs consistentes
+      const tbodyNew = document.createElement('tbody');
+      (data||[]).sort((a,b)=>a.id-b.id).forEach(item => tbodyNew.appendChild(trPendiente(item)));
+      tbody.replaceWith(tbodyNew);
+
+      status.textContent = '✅ Cambios guardados';
+    } catch(e){
+      console.error('Error pendientes (save):', e);
+      err.textContent = 'No se pudieron guardar los cambios.';
+      status.textContent = '';
+    }
+  }
+
   // ----- Calendario con persistencia en Supabase -----
   let calendar, calendarRendered = false;
 
@@ -138,12 +338,13 @@
   }
 
   async function fetchEventos(){
+    if (!supabaseClient) return [];
     const { data, error } = await supabaseClient
       .from('eventos')
       .select('id, title, start, end')
       .order('start', { ascending: true });
     if (error) throw error;
-    return data.map(supaToFc);
+    return (data||[]).map(supaToFc);
   }
 
   async function createEvento({ title, start, end }){
@@ -173,8 +374,9 @@
   }
 
   async function initCalendar(){
+    if (calendarRendered) return;
     const el = document.getElementById('calendar');
-    if (!el || !window.FullCalendar || calendarRendered) return;
+    if (!el || !window.FullCalendar) return;
 
     const initialEvents = await fetchEventos().catch(e => { console.error(e); return []; });
 
@@ -190,7 +392,6 @@
       },
       events: initialEvents,
 
-      // Crear evento con click en día
       dateClick: async (info) => {
         const title = prompt('Título del evento:');
         if (!title) return;
@@ -200,7 +401,6 @@
         } catch (e) { console.error(e); alert('No se pudo crear el evento'); }
       },
 
-      // Editar arrastrando o redimensionando
       eventDrop: async ({ event }) => {
         try {
           await updateEvento({
@@ -222,7 +422,6 @@
         } catch (e) { console.error(e); alert('No se pudo actualizar el evento'); event.revert(); }
       },
 
-      // Borrar con click
       eventClick: async ({ event }) => {
         if (!confirm(`Eliminar evento: "${event.title}"?`)) return;
         try {
@@ -232,170 +431,6 @@
       }
     });
 
-    calendar.render();
-    calendarRendered = true;
-  }
-</script>
-
-
-  <footer>© 2025 Cáritas CNC. Todos los derechos reservados.</footer>
-
-  <!-- ================== JS inline ================== -->
-  <script>
-  // Crear cliente Supabase con variables globales del config
-  const supabaseClient = supabase.createClient(supabaseUrl, supabaseAnonKey);
-
-  // -------- Navegación / secciones --------
-  function showSection(id) {
-    document.querySelectorAll('.seccion').forEach(s => s.classList.remove('active'));
-    const el = document.getElementById(id);
-    if (el) el.classList.add('active');
-
-    // Si abrimos administración, por defecto mostrar 'pendientes'
-    if (id === 'administracion') {
-      showSubSection('pendientes');
-    }
-  }
-
-  function showSubSection(id) {
-    document.querySelectorAll('.subsection').forEach(s => s.style.display = 'none');
-    const el = document.getElementById(id);
-    if (el) el.style.display = 'block';
-
-    // Cargas diferidas
-    if (id === 'pendientes') loadPendientes();
-    if (id === 'agendamiento') initCalendar();
-  }
-
-  function goLogin(){ window.location.href = 'login.html'; }
-
-  function logout(){
-    auth.signOut().then(() => showSection('inicio'));
-  }
-
-  // -------- Registro familias (placeholder a tu API) --------
-  document.getElementById('familiaForm').addEventListener('submit', async function(e){
-    e.preventDefault();
-    const msgDiv = document.getElementById('msg');
-    msgDiv.innerHTML = '';
-    const formData = new FormData(this);
-    try {
-      const res = await fetch('https://api-familias.onrender.com/familias', { method:'POST', body: formData });
-      const data = await res.json();
-      if (res.ok) {
-        msgDiv.innerHTML = "<div class='success'>✅ Registro exitoso</div>";
-        this.reset();
-      } else {
-        msgDiv.innerHTML = "<div class='error'>❌ Error al registrar</div>";
-        console.error('API /familias:', data);
-      }
-    } catch(err){
-      msgDiv.innerHTML = "<div class='error'>❌ No se pudo conectar</div>";
-      console.error(err);
-    }
-  });
-
-  // -------- Pendientes (editable con UPSERT) --------
-  function trPendiente({ id, descripcion = "", estado = false } = {}) {
-    const tr = document.createElement('tr');
-    if (id != null) tr.dataset.id = id;
-    tr.innerHTML = `
-      <td contenteditable="true">${(descripcion ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',\"'\":'&#39;'}[m]))}</td>
-      <td style="text-align:center;"><input type="checkbox" ${estado ? 'checked' : ''}></td>
-      <td style="text-align:center;"><button type="button" onclick="deletePendRow(this)">🗑️</button></td>
-    `;
-    return tr;
-  }
-
-  function addPendRow(){
-    const tbody = document.querySelector('#pendientesTable tbody');
-    if (tbody) tbody.appendChild(trPendiente({ descripcion:"", estado:false }));
-  }
-
-  function deletePendRow(btn){
-    const tr = btn.closest('tr');
-    if (tr) tr.remove();
-  }
-
-  async function loadPendientes(){
-    const tbody = document.querySelector('#pendientesTable tbody');
-    const status = document.getElementById('pendientesStatus');
-    const err = document.getElementById('pendientesError');
-    if (!tbody) return;
-
-    status.textContent = '⏳ Cargando...'; err.textContent = '';
-    try {
-      const { data, error } = await supabaseClient
-        .from('pendientes')
-        .select('id, descripcion, estado')
-        .order('id', { ascending: true });
-      if (error) throw error;
-
-      tbody.innerHTML = '';
-      data.forEach(item => tbody.appendChild(trPendiente(item)));
-      status.textContent = `✔ ${data.length} tareas`;
-    } catch(e){
-      console.error('Error pendientes (load):', e);
-      err.textContent = 'No se pudieron cargar los pendientes.';
-      status.textContent = '';
-    }
-  }
-
-  async function savePendientes(){
-    const tbody = document.querySelector('#pendientesTable tbody');
-    const status = document.getElementById('pendientesStatus');
-    const err = document.getElementById('pendientesError');
-    if (!tbody) return;
-
-    const rows = [...tbody.querySelectorAll('tr')];
-    const payload = rows.map(tr => {
-      const [tdDesc, tdCheck] = tr.children;
-      const id = tr.dataset.id ? Number(tr.dataset.id) : undefined;
-      const descripcion = (tdDesc.textContent || '').trim();
-      const estado = tdCheck.querySelector('input[type="checkbox"]').checked;
-      const obj = { descripcion, estado };
-      if (id) obj.id = id;
-      return obj;
-    });
-
-    status.textContent = '💾 Guardando...'; err.textContent = '';
-    try {
-      const { data, error } = await supabaseClient
-        .from('pendientes')
-        .upsert(payload, { onConflict: 'id' })
-        .select('id, descripcion, estado');
-      if (error) throw error;
-
-      // refrescar con IDs consistentes
-      const tbodyNew = document.createElement('tbody');
-      data.sort((a,b)=>a.id-b.id).forEach(item => tbodyNew.appendChild(trPendiente(item)));
-      tbody.replaceWith(tbodyNew);
-
-      status.textContent = '✅ Cambios guardados';
-    } catch(e){
-      console.error('Error pendientes (save):', e);
-      err.textContent = 'No se pudieron guardar los cambios.';
-      status.textContent = '';
-    }
-  }
-
-  // -------- Calendario --------
-  let calendarRendered = false;
-  function initCalendar(){
-    const el = document.getElementById('calendar');
-    if (!el || !window.FullCalendar || calendarRendered) return;
-    const calendar = new FullCalendar.Calendar(el, {
-      initialView: 'dayGridMonth',
-      height: 'auto',
-      headerToolbar: {
-        left: 'prev,next today',
-        center: 'title',
-        right: 'dayGridMonth,timeGridWeek,timeGridDay'
-      },
-      events: [
-        { title: 'Reunión de jóvenes', start: new Date().toISOString().slice(0,10) }
-      ]
-    });
     calendar.render();
     calendarRendered = true;
   }
@@ -412,4 +447,3 @@
   </script>
 </body>
 </html>
-
