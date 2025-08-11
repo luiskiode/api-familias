@@ -6,7 +6,7 @@
   <title>Cáritas CNC – Gestión</title>
 
   <!-- Estilos globales -->
-  <link rel="stylesheet" href="styles.css?v=3" />
+  <link rel="stylesheet" href="styles.css?v=4" />
 
   <!-- PWA opcional -->
   <link rel="manifest" href="manifest.json" />
@@ -26,10 +26,18 @@
   <link href="https://unpkg.com/@fullcalendar/daygrid@6.1.8/index.global.css" rel="stylesheet" />
 
   <!-- FullCalendar JS (LOCAL) -->
-  <script defer src="./vendor/fullcalendar/index.global.min.js"></script>
+  
 
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin />
+
+<!-- FullCalendar CSS (CDN confiable) -->
+<link href="https://unpkg.com/@fullcalendar/core@6.1.8/index.global.css" rel="stylesheet" />
+<link href="https://unpkg.com/@fullcalendar/daygrid@6.1.8/index.global.css" rel="stylesheet" />
+
+<!-- FullCalendar JS (CDN confiable) -->
+<script defer src="https://unpkg.com/fullcalendar@6.1.8/index.global.min.js"></script>
+
 </head>
 
 <body>
@@ -263,7 +271,7 @@
     }
   }
 
-  // --- Registro (API Render)
+  // --- Registro (API Render absoluta)
   document.getElementById('familiaForm').addEventListener('submit', async function(e){
     e.preventDefault();
     const msgDiv = document.getElementById('msg');
@@ -378,7 +386,7 @@
     } catch(e){ err.textContent = 'No se pudieron guardar los cambios.'; status.textContent = ''; }
   }
 
-  // --- Familias (Admin)
+  // --- Familias (Admin) — primero intenta Supabase; si falla, Render (URL absoluta)
   let familiasAdminData = [];
   const famSearch = () => (document.getElementById('fam-search').value || '').trim().toLowerCase();
 
@@ -423,7 +431,9 @@
       familiasAdminData = (data || []);
       renderFamiliasAdmin();
       return;
-    } catch (e) {}
+    } catch (e) {
+      // Fallback a API en Render (URL absoluta)
+    }
     try {
       const res = await fetch('https://api-familias.onrender.com/familias');
       if (!res.ok) throw new Error('API Render error');
@@ -447,7 +457,7 @@
   document.getElementById('fam-refresh').addEventListener('click', loadFamiliasAdmin);
   document.getElementById('fam-search').addEventListener('input', renderFamiliasAdmin);
 
-  // --- Calendario (LOCAL JS + CSS por CDN fiable) con CRUD Supabase
+  // --- Calendario (JS local + CSS por CDN) con CRUD Supabase
   function mapEventoToFC(row){
     return {
       id: row.id,
@@ -530,7 +540,6 @@
       if (calendarInstance) calendarInstance.refetchEvents();
     } catch (err) {
       alert('No se pudo guardar el evento.');
-      console.error('Guardar evento:', err);
     }
   });
 
