@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Validar Credencial - Cáritas CNC</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    h1 {
+      background: #b71c1c;
+      color: white;
+      padding: 15px;
+    }
+    #video {
+      width: 100%;
+      max-width: 400px;
+      border: 3px solid #b71c1c;
+      border-radius: 10px;
+    }
+    #output {
+      margin-top: 20px;
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+    #success {
+      color: green;
+    }
+    #error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Validar Credencial</h1>
+
+<video id="video" autoplay></video>
+<div id="output">Escanea el código QR...</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<!-- Tu config de Firebase -->
+<script src="firebase-config.js"></script>
+
+<!-- Librería jsQR -->
+<script src="https://unpkg.com/jsqr/dist/jsQR.js"></script>
+
+<script>
+const db = firebase.firestore();
+const video = document.getElementById("video");
+const output = document.getElementById("output");
+
+navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+  .then(stream => {
+    video.srcObject = stream;
+    video.setAttribute("playsinline", true);
+    requestAnimationFrame(tick);
+  });
+
+function tick() {
+  if (video.readyState === video.HAVE_ENOUGH_DATA) {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    canvas.height = video.videoHeight;
+    canvas.width = video.videoWidth;
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: "dontInvert" });
+    if (code) {
+      validarCodigo(code.data);
+    }
+  }
+  requestAnimationFrame(tick);
+}
+
+async function validarCodigo(codigo) {
+  try {
+    const doc = await db.collection("credenciales").doc(codigo).get();
+    if (doc.exists) {
+      const data = doc.data();
+      output.innerHTML = `<span id="success">✅ Credencial válida</span><br>
+        Nombre: ${data.nombre}<br>
+        Rol: ${data.rol}`;
+    } else {
+      output.innerHTML = `<span id="error">❌ Credencial inválida</span>`;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+</script>
+
+</body>
+</html>

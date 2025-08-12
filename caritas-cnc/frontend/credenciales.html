@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cáritas CNC - Credenciales</title>
+<link rel="stylesheet" href="styles.css">
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="firebase-config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+<script src="jsQR.js"></script>
+<style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .credencial { border: 1px solid #ccc; padding: 10px; margin-top: 10px; }
+    #previewQR { margin-top: 10px; }
+    video { width: 100%; max-width: 400px; }
+</style>
+</head>
+<body>
+<h1>Generar Credencial</h1>
+<form id="formCredencial">
+    <input type="text" id="nombre" placeholder="Nombre completo" required>
+    <input type="text" id="dni" placeholder="DNI" required>
+    <button type="submit">Generar</button>
+</form>
+
+<div id="previewQR"></div>
+
+<hr>
+<h2>Validar Credencial (Escanear QR)</h2>
+<video id="video" autoplay></video>
+<canvas id="canvas" hidden></canvas>
+<p id="resultado"></p>
+
+<script>
+// Proteger acceso
+auth.onAuthStateChanged(user => {
+    if (!user || user.email !== "admin@caritas.com") {
+        window.location.href = "login.html";
+    }
+});
+
+const db = firebase.firestore();
+const form = document.getElementById("formCredencial");
+const preview = document.getElementById("previewQR");
+
+form.addEventListener("submit", async e => {
+    e.preventDefault();
+    const nombre = document.getElementById("nombre").value.trim();
+    const dni = document.getElementById("dni").value.trim();
+    const codigo = `CCNC-${Date.now()}-${Math.floor(Math.random()*1000)}`;
+
+    const data = { nombre, dni, codigo, fecha: new Date().toISOString() };
+    await db.collection("credenciales").doc(codigo).set(data);
+
+    preview.innerHTML = `
+        <div class="credencial">
+            <p><b>${nombre}</b></p>
+            <p>DNI: ${dni}</p>
+            <p>Código: ${codigo}</p>
+            <canvas id="qrCanvas"></canvas>
+        </div>
+    `;
+    QRCode.toCanvas(document.getElementById("qrCanvas"), codigo, { width: 200 });
+});
+
+// Escaneo con jsQR
+const video = document.getElementById("video");
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+const resultado = document.getElementById("resultado");
+
+navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+    .then(stream => video.srcObject = stream);
+
+video.addEventListener("play", () => {
+    const loop = () => {
+        if (video.readyState === video.HAVE_ENOUGH_DATA) {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const code = jsQR(imageData.data, canvas.width, canvas.height);
+            if (code) {
+                validarCodigo(code.data);
+            }
+        }
+        requestAnimationFrame(loop);
+    };
+    loop();
+});
+
+async function validarCodigo(codigo) {
+    const doc = await db.collection("credenciales").doc(codigo).get();
+    if (doc.exists) {
+        const data = doc.data();
+        resultado.textContent = `✅ Credencial válida: ${data.nombre} (DNI: ${data.dni})`;
+    } else {
+        resultado.textContent = "❌ Credencial no válida";
+    }
+}
+</script>
+</body>
+</html>
