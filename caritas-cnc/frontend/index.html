@@ -1,718 +1,262 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Cáritas CNC – Gestión</title>
+  <!-- ================== META ================== -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Cáritas CNC</title>
 
-  <!-- Estilos -->
-  <link rel="stylesheet" href="styles.css?v=4" />
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#b71c1c" />
+  <!-- ================== ESTILOS ================== -->
+  <link rel="stylesheet" href="styles.css" />
 
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin />
+  <!-- ================== ICONOS ================== -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-  <!-- FullCalendar CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
+  <!-- ================== MAPAS (Leaflet) ================== -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js" defer></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js" defer></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js" defer></script>
-  <script src="firebase-config.js" defer></script>
+  <!-- ================== QR Code ================== -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 
-  <!-- Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js" defer></script>
-  <script src="supabase-config.js" defer></script>
-
-  <!-- FullCalendar JS -->
-  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js" defer></script>
-
-  <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin defer></script>
-
-  <!-- QRCodeJS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
+  <!-- ================== SUPABASE ================== -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script>
+    const supabaseClient = supabase.createClient(
+      "https://qivjlsvcjyqymommfdke.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFpdmpsc3ZjanlxeW1vbW1mZGtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQzNjA2MjUsImV4cCI6MjA2OTkzNjYyNX0.YN0W5miJeWwu96jhqKiGB-cA8t9TeIboQWURCjTFVbw"
+    );
+  </script>
 </head>
+
 <body>
+  <!-- ================== HEADER / NAVEGACIÓN ================== -->
+  <header class="app-header">
+    <h1><i class="fas fa-church"></i> Cáritas CNC</h1>
+    <nav>
+      <button type="button" onclick="showSection('inicio')" class="tabbtn">Inicio</button>
+      <button type="button" onclick="showSection('credenciales')" class="tabbtn">Credenciales</button>
+      <button type="button" onclick="showSection('registro')" class="tabbtn">Registro</button>
+      <button type="button" onclick="showSection('login')" id="btn-login">Iniciar sesión</button>
+      <button type="button" id="btn-logout" style="display:none" onclick="logout()">Cerrar sesión</button>
+    </nav>
+  </header>
 
-<header class="app-header">
-  <h1>Cáritas CNC</h1>
-</header>
+  <!-- ================== MAIN ================== -->
+  <main>
 
-<!-- INICIO -->
-<div id="Empieza" class="tabcontent active">
-  <div class="contenido-inicio">
-    <div class="imagenes-laterales">
-      <img src="img/imagen de grupo 1.jpeg" alt="Foto 1" />
-      <img src="img/imagen de grupo 2.jpeg" alt="Foto 2" />
-      <img src="img/imagen de grupo 3.jpeg" alt="Foto 3" />
-      <img src="img/imagen de grupo 4.jpeg" alt="Foto 4" />
-      <img src="img/imagen de grupo 5.jpeg" alt="Foto 5" />
-    </div>
-    <section style="flex: 1;">
-      <h2>Bienvenido a Cáritas CNC ❤️</h2>
-      <p>Esta es la plataforma de gestión para el voluntariado de Cáritas CNC.</p>
-      <p>Desde aquí puedes registrar nuevas familias, gestionar tareas internas y acceder a la agenda del grupo.</p>
-
-      <h3>Nuestra Misión</h3>
-      <p>Como voluntarios de Cáritas CNC, nuestra misión es servir con amor, respeto y empatía a las familias más necesitadas.</p>
-      <p>Nos guiamos por la fe, el compromiso y la compasión para acompañar, escuchar y brindar apoyo a quienes más lo requieren, promoviendo siempre la dignidad, la justicia y la solidaridad.</p>
-
-      <h3>Nuestra Visión</h3>
-      <p>Ser un referente de servicio y apoyo a las familias en situación de vulnerabilidad, construyendo una comunidad más justa y solidaria, donde cada persona sea valorada y tenga la oportunidad de vivir con dignidad.</p>
-      <p>Soñamos con una comunidad más justa, fraterna y solidaria, donde cada persona en situación de vulnerabilidad sea acogida, acompañada y valorada con dignidad. Aspiramos a ser un voluntariado comprometido y cercano, inspirado por el Evangelio, que transforme realidades a través del amor, la fe y el servicio.</p>
-
-      <p>¡Gracias por ser parte de esta misión!</p>
-
-      <p><b>Gracias por usar Cáritas CNC</b></p>
-      <p class="muted">Versión 1.1.0</p>
-    </section>
-  </div>
-</div>
-
-<!-- VALIDAR CREDENCIAL -->
-<div id="validar" class="tabcontent" style="display:none;">
-  <div class="inicio-card" style="display: flex; gap: 15px; align-items: flex-start;">
-    <div class="card">
-      <h2>Validar Credencial</h2>
-      <p>Escanea el código QR de la credencial del usuario para verificar su validez.</p>
-      <button onclick="window.location.href='validar.html'">Validar</button>
-    </div>
-  </div>
-</div>
-
-<!-- REGISTRO -->
-<section id="registro" class="seccion" style="display:none;">
-  <h2>Registro de Familias</h2>
-  <div id="msg"></div>
-
-  <form id="familiaForm" enctype="multipart/form-data">
-    <label>Nombres y Apellidos*</label>
-    <input type="text" name="nombres_apellidos" required />
-
-    <label>DNI*</label>
-    <input type="text" name="dni_solicitante" maxlength="8" pattern="[0-9]{8}" required />
-
-    <label>Apellido Familia*</label>
-    <input type="text" name="apellido_familia" required />
-
-    <label>Dirección* (con sugerencias)</label>
-    <div class="row">
-      <input type="text" id="reg-direccion" name="direccion" list="dl-direcciones" autocomplete="off" required />
-      <button type="button" class="submit-btn" id="btn-ver-mapa">📍 Ver en mapa</button>
-    </div>
-    <datalist id="dl-direcciones"></datalist>
-
-    <label>Fecha de Registro*</label>
-    <input type="date" name="fecha_registro" required />
-
-    <label>Teléfono*</label>
-    <input type="text" name="telefono_contacto" pattern="[0-9]+" required />
-
-    <label>Observaciones</label>
-    <textarea name="observaciones"></textarea>
-
-    <label>Adjuntar documento</label>
-    <input type="file" name="archivo" accept=".pdf,.jpg,.png" />
-
-    <label><input type="checkbox" required /> Acepto los términos y condiciones</label>
-    <button type="submit" class="submit-btn">Registrar</button>
-  </form>
-
-  <div style="margin-top:12px;">
-    <div id="map" style="height:320px; border-radius:14px; border:1px solid #e6e6e6; background:#f6f7f9;"></div>
-  </div>
-</section>
-
-<!-- CONTACTO -->
-<section id="contacto" class="seccion" style="display:none;">
-  <h2>Contacto</h2>
-  <p>Email: contacto@caritas.org</p>
-  <p>Teléfono: +51 999 888 777</p>
-</section>
-
-<!-- ADMINISTRACIÓN -->
-<section id="administracion" class="seccion" style="display:none;">
-  <h2>Administración</h2>
-
-  <div style="display:flex; gap:.5rem; margin:.5rem 0; flex-wrap:wrap;">
-    <button type="button" class="submit-btn" onclick="showSubSection('pendientes')">✅ Pendientes de grupo</button>
-    <button type="button" class="submit-btn" onclick="showSubSection('agendamiento')">🗓️ Agenda</button>
-    <button type="button" id="btn-admin-familias" class="submit-btn hidden" onclick="showSubSection('familiasAdmin')">👪 Familias registradas</button>
-  </div>
-
-  <!-- PENDIENTES -->
-  <div id="pendientes" class="subsection" style="display:none; margin-top:1rem;">
-    <h3>Pendientes de grupo</h3>
-    <p>Las tareas pendientes se almacenan en Supabase; puedes editarlas aquí y guardarlas.</p>
-
-    <div style="display:flex; gap:.5rem; margin:.5rem 0;">
-      <button class="submit-btn" type="button" onclick="addPendRow()">➕ Añadir fila</button>
-      <button class="submit-btn" type="button" onclick="savePendientes()">💾 Guardar cambios</button>
-      <span id="pendientesStatus" style="margin-left:.5rem;"></span>
-    </div>
-
-    <table id="pendientesTable">
-      <thead>
-        <tr>
-          <th style="width:70%;">Descripción (editable)</th>
-          <th style="width:15%;">Hecho</th>
-          <th style="width:15%;">Acciones</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-
-    <div id="pendientesError" style="color:#b00020; margin-top:.5rem;"></div>
-  </div>
-
-  <!-- CALENDARIO -->
-  <div id="agendamiento" class="subsection" style="display:none; margin-top:1rem;">
-    <h3>Agenda</h3>
-    <div id="calendar"></div>
-
-    <!-- Modal Evento (CRUD) -->
-    <div id="event-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:50; align-items:center; justify-content:center;">
-      <div style="background:#fff; color:#1b1b1b; width:min(520px,92vw); border-radius:14px; border:1px solid #e7e7e7; box-shadow:0 18px 40px rgba(0,0,0,.25);">
-        <div style="padding:14px 16px; border-bottom:1px solid #eee; font-weight:700">Evento</div>
-        <form id="event-form" style="padding:14px 16px; display:grid; gap:10px">
-          <input type="hidden" id="ev-id" />
-          <label>Título
-            <input id="ev-title" required />
-          </label>
-          <label>Inicio
-            <input id="ev-start" type="datetime-local" required />
-          </label>
-          <label>Fin (opcional)
-            <input id="ev-end" type="datetime-local" />
-          </label>
-          <label style="display:flex; gap:.5rem; align-items:center;">
-            <input id="ev-allday" type="checkbox" />
-            Todo el día
-          </label>
-
-          <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:6px">
-            <button type="button" id="ev-delete" class="submit-btn" style="background:#fff; color:#1b1b1b; border:1px solid #e0e0e0">🗑️ Borrar</button>
-            <button type="button" id="ev-cancel" class="submit-btn" style="background:#fff; color:#1b1b1b; border:1px solid #e0e0e0">Cancelar</button>
-            <button type="submit" class="submit-btn">Guardar</button>
-          </div>
-        </form>
+    <!-- ====== SECCIÓN: INICIO ====== -->
+    <section id="inicio" class="seccion active">
+      <div class="inicio-card">
+        <h2>Bienvenido a Cáritas CNC ❤️</h2>
+        <p>Plataforma de gestión para el voluntariado de Cáritas CNC.</p>
+        <p>Desde aquí puedes registrar nuevas familias, gestionar credenciales y acceder a la agenda.</p>
       </div>
-    </div>
-    <!-- /Modal -->
-  </div>
+    </section>
 
-  <!-- FAMILIAS (SOLO LOGUEADO) -->
-  <div id="familiasAdmin" class="subsection" style="display:none; margin-top:1rem;">
-    <h3>Familias registradas</h3>
-    <p class="muted" id="familiasNotice" style="display:none;">Debes iniciar sesión para ver esta información.</p>
+    <!-- ====== SECCIÓN: CREDENCIALES ====== -->
+    <section id="credenciales" class="seccion">
+      <h2>Credenciales</h2>
 
-    <div class="row" style="margin:.5rem 0;">
-      <input id="fam-search" placeholder="🔎 Buscar por nombres, apellido, dirección o DNI…" />
-      <button type="button" class="submit-btn" id="fam-refresh">↻ Actualizar</button>
-      <span class="muted" id="fam-count"></span>
-    </div>
+      <!-- Crear Credencial -->
+      <div class="card">
+        <h3>Crear Credencial</h3>
+        <input type="email" id="cred-email" placeholder="Correo electrónico" />
+        <input type="password" id="cred-password" placeholder="Contraseña" />
+        <input type="file" id="foto-perfil" accept="image/*" />
+        <button id="btn-crear-credencial" class="btn-big">Crear credencial</button>
+        <canvas id="qr-canvas"></canvas>
+        <button id="btn-ver-credencial" style="display:none;">
+          <i class="fa-solid fa-id-card"></i> Ver Credencial
+        </button>
+      </div>
 
-    <table id="familiasAdminTable">
-      <thead>
-        <tr>
-          <th>Nombres</th>
-          <th>DNI</th>
-          <th>Apellido</th>
-          <th>Dirección</th>
-          <th>Fecha</th>
-          <th>Teléfono</th>
-          <th>Observaciones</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+      <!-- Validar Credencial -->
+      <div class="card">
+        <h3>Validar Credencial</h3>
+        <button id="btn-ver-credencial-secundario" class="submit-btn">
+          <i class="fa-solid fa-id-card"></i> Ver Credencial
+        </button>
+      </div>
+    </section>
 
-    <div id="familiasAdminError" class="error" style="display:none; margin-top:.5rem;">
-      No se pudo cargar el listado.
-    </div>
-  </div>
+    <!-- ====== SECCIÓN: REGISTRO DE FAMILIAS ====== -->
+    <section id="registro" class="seccion">
+      <h2>Registro de Familias</h2>
+      <div id="msg"></div>
 
-  <!-- Generar Credencial -->
-  <div class="card" style="margin-top: 2rem;">
-    <h2>Generar Credencial</h2>
-    <input type="text" id="nombre" placeholder="Nombre del usuario" />
-    <button onclick="generarCredencial()">Generar</button>
-    <div id="qrcode"></div>
-  </div>
-</section>
+      <form id="familiaForm" enctype="multipart/form-data" class="card">
+        <label>Nombres y Apellidos*</label>
+        <input type="text" name="nombres_apellidos" required />
 
-<script>
-  // --- Variables globales
-  let calendarInstance = null;
+        <label>DNI*</label>
+        <input type="text" name="dni_solicitante" maxlength="8" pattern="[0-9]{8}" required />
 
-  // Supabase cliente
-  const supabaseClient = supabase.createClient(supabaseUrl, supabaseAnonKey);
+        <label>Apellido Familia*</label>
+        <input type="text" name="apellido_familia" required />
 
-  // Función para mostrar secciones principales
-  function showSection(id) {
-    document.querySelectorAll('.tabcontent, .seccion').forEach(s => {
-      s.style.display = 'none';
-      s.classList.remove('active');
-    });
-    const el = document.getElementById(id);
-    if (el) {
-      el.style.display = 'block';
-      el.classList.add('active');
-    }
-    if (id === 'administracion') showSubSection('pendientes');
+        <label>Dirección*</label>
+        <input type="text" name="direccion" required />
+
+        <label>Fecha de Registro*</label>
+        <input type="date" name="fecha_registro" required />
+
+        <label>Teléfono*</label>
+        <input type="text" name="telefono_contacto" pattern="[0-9]+" required />
+
+        <label>Observaciones</label>
+        <textarea name="observaciones"></textarea>
+
+        <button type="submit" class="submit-btn">Registrar</button>
+      </form>
+    </section>
+
+    <!-- ====== SECCIÓN: LOGIN ====== -->
+    <section id="login" class="seccion">
+      <h2>Iniciar Sesión</h2>
+      <form id="loginForm" class="card">
+        <input type="email" id="email" placeholder="Correo electrónico" required />
+        <input type="password" id="password" placeholder="Contraseña" required />
+        <button type="submit" class="submit-btn">Entrar</button>
+        <button type="button" onclick="resetPass()">¿Olvidaste tu contraseña?</button>
+      </form>
+      <div id="loginMessage"></div>
+    </section>
+  </main>
+
+  <!-- ================== FOOTER ================== -->
+  <footer>© 2025 Cáritas CNC. Todos los derechos reservados.</footer>
+
+<!-- ================== SCRIPTS FUNCIONALES ================== -->
+<script type="module">
+  /* ====== Inicializar Firebase ====== */
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, signOut } 
+    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyD5X6LUG_dOwuaUf6jQUHw_LM5PFgOmc40",
+    authDomain: "web-familias.firebaseapp.com",
+    projectId: "web-familias",
+    storageBucket: "web-familias.firebasestorage.app",
+    messagingSenderId: "261699620792",
+    appId: "1:261699620792:web:8ff59afb72e96c371dc94d"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  /* ====== Funciones de Credenciales con Supabase ====== */
+  async function guardarCredencial(usuario, clave) {
+    const { error } = await supabaseClient.from('credenciales').insert([{ usuario, clave }]);
+    if (error) throw error;
   }
 
-  // Mostrar subsecciones dentro de administración
-  function showSubSection(id) {
-    document.querySelectorAll('#administracion .subsection').forEach(s => s.style.display = 'none');
-    const el = document.getElementById(id);
-    if (!el) return;
-
-    // Gate autenticación para familias
-    if (id === 'familiasAdmin') {
-      const user = (window.firebase && firebase.auth) ? firebase.auth().currentUser : null;
-      const notice = document.getElementById('familiasNotice');
-      if (!user) {
-        notice.style.display = 'block';
-        el.style.display = 'block';
-        const tbody = document.querySelector('#familiasAdminTable tbody');
-        if (tbody) tbody.innerHTML = '';
-        document.getElementById('fam-count').textContent = '';
-        return;
-      } else {
-        notice.style.display = 'none';
-        el.style.display = 'block';
-        loadFamiliasAdmin();
-        return;
-      }
-    }
-
-    el.style.display = 'block';
-    if (id === 'pendientes') loadPendientes();
-    if (id === 'agendamiento') initCalendar();
+  async function validarCredencial(usuario, clave) {
+    const { data, error } = await supabaseClient
+      .from('credenciales')
+      .select('*')
+      .eq('usuario', usuario)
+      .eq('clave', clave);
+    if (error) throw error;
+    return data.length > 0;
   }
 
-  // Login / Logout
-  function goLogin(){ window.location.href = 'login.html'; }
-  function logout(){
-    const fbAuth = (typeof auth !== 'undefined' && auth) ? auth : (firebase.auth ? firebase.auth() : null);
-    if (fbAuth) {
-      fbAuth.signOut().then(() => { updateAuthUI(null); showSection('Empieza'); });
+  /* ====== Botón Crear Credencial ====== */
+  document.getElementById("btn-crear-credencial")?.addEventListener("click", async () => {
+    const email = document.getElementById("cred-email").value.trim();
+    const password = document.getElementById("cred-password").value.trim();
+    if (!email || !password) {
+      alert("⚠ Ingresa correo y contraseña");
+      return;
     }
-  }
-
-  // Actualizar UI según autenticación
-  function updateAuthUI(user) {
-    document.getElementById('btn-login')?.style.setProperty('display', user ? 'none' : 'inline-block');
-    document.getElementById('btn-logout')?.style.setProperty('display', user ? 'inline-block' : 'none');
-    const btnFam = document.getElementById('btn-admin-familias');
-    if (btnFam) btnFam.classList.toggle('hidden', !user);
-    if (!user && document.getElementById('familiasAdmin').style.display === 'block') {
-      const tbody = document.querySelector('#familiasAdminTable tbody');
-      if (tbody) tbody.innerHTML = '';
-      document.getElementById('fam-count').textContent = '';
-      document.getElementById('familiasNotice').style.display = 'block';
+    try {
+      await guardarCredencial(email, password);
+      const canvas = document.getElementById("qr-canvas");
+      await QRCode.toCanvas(canvas, email, { width: 180 });
+      document.getElementById("btn-ver-credencial").style.display = "inline-block";
+      alert("✅ Credencial creada con éxito");
+    } catch (err) {
+      alert("❌ No se pudo crear la credencial");
     }
-  }
+  });
 
-  // Registro familia (API)
-  document.getElementById('familiaForm').addEventListener('submit', async function(e){
+  document.getElementById("btn-ver-credencial-secundario")?.addEventListener("click", async () => {
+    const email = prompt("Correo:");
+    const password = prompt("Contraseña:");
+    const valido = await validarCredencial(email, password);
+    alert(valido ? "✔ Credencial válida" : "❌ Credencial inválida");
+  });
+
+  /* ====== Registro de Familias en Supabase ====== */
+  document.getElementById('familiaForm')?.addEventListener('submit', async function(e) {
     e.preventDefault();
     const msgDiv = document.getElementById('msg');
     msgDiv.innerHTML = '';
     const formData = new FormData(this);
-    try {
-      const res = await fetch('https://api-familias.onrender.com/familias', { method:'POST', body: formData });
-      const data = await res.json();
-      if (res.ok) {
-        msgDiv.innerHTML = "<div class='success'>✅ Registro exitoso</div>";
-        this.reset();
-      } else {
-        msgDiv.innerHTML = "<div class='error'>❌ Error al registrar</div>";
-        console.error(data);
-      }
-    } catch(err){
-      msgDiv.innerHTML = "<div class='error'>❌ No se pudo conectar</div>";
-    }
-  });
-
-  // --- Leaflet y geocodificación
-  let map, marker;
-  function initMap() {
-    map = L.map('map', { center: [-12.0464, -77.0428], zoom: 12 });
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
-  }
-  function centerMap(lat, lng, label='') {
-    const pos = [lat, lng];
-    map.setView(pos, 16);
-    if (!marker) marker = L.marker(pos).addTo(map);
-    else marker.setLatLng(pos);
-    if (label) marker.bindPopup(label).openPopup();
-  }
-  async function geocodeAddress(q, limit=1){
-    const u = new URL('https://nominatim.openstreetmap.org/search');
-    u.searchParams.set('format','json');
-    u.searchParams.set('q', q);
-    u.searchParams.set('addressdetails','1');
-    u.searchParams.set('limit', String(limit));
-    const r = await fetch(u, { headers: { 'Accept-Language':'es' } });
-    if (!r.ok) throw new Error('Nominatim error');
-    return r.json();
-  }
-  const dirInput = document.getElementById('reg-direccion');
-  const dl = document.getElementById('dl-direcciones');
-  let sugTimer;
-  dirInput.addEventListener('input', () => {
-    clearTimeout(sugTimer);
-    const q = dirInput.value.trim();
-    if (q.length < 3) { dl.innerHTML = ''; return; }
-    sugTimer = setTimeout(async () => {
-      try {
-        const results = await geocodeAddress(q, 5);
-        dl.innerHTML = results.map(r => `<option value="${escapeHtml(r.display_name)}"></option>`).join('');
-      } catch {}
-    }, 350);
-  });
-  document.getElementById('btn-ver-mapa').addEventListener('click', async () => {
-    const q = dirInput.value.trim();
-    if (!q) return;
-    try {
-      const [r] = await geocodeAddress(q, 1) || [];
-      if (r) centerMap(parseFloat(r.lat), parseFloat(r.lon), r.display_name);
-      else alert('No se encontró esa dirección.');
-    } catch {
-      alert('Error al buscar la dirección.');
-    }
-  });
-
-  // Escape HTML para evitar XSS
-  function escapeHtml(s=''){
-    return s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-  }
-
-  // --- Pendientes (Supabase)
-  function trPendiente({ id, descripcion = "", estado = false } = {}) {
-    const tr = document.createElement('tr');
-    if (id != null) tr.dataset.id = id;
-    tr.innerHTML = `
-      <td contenteditable="true">${escapeHtml(descripcion)}</td>
-      <td style="text-align:center;"><input type="checkbox" ${estado ? 'checked' : ''}></td>
-      <td style="text-align:center;"><button type="button" onclick="deletePendRow(this)">🗑️</button></td>
-    `;
-    return tr;
-  }
-  function addPendRow(){ document.querySelector('#pendientesTable tbody').appendChild(trPendiente({ descripcion:"", estado:false })); }
-  function deletePendRow(btn){ btn.closest('tr').remove(); }
-
-  async function loadPendientes(){
-    const tbody = document.querySelector('#pendientesTable tbody');
-    const status = document.getElementById('pendientesStatus');
-    const err = document.getElementById('pendientesError');
-    status.textContent = '⏳ Cargando...'; err.textContent = '';
-    try {
-      const { data, error } = await supabaseClient.from('pendientes').select('id, descripcion, estado').order('id', { ascending: true });
-      if (error) throw error;
-      tbody.innerHTML = '';
-      data.forEach(item => tbody.appendChild(trPendiente(item)));
-      status.textContent = `✔ ${data.length} tareas`;
-    } catch(e){
-      err.textContent = 'No se pudieron cargar los pendientes.'; status.textContent = '';
-    }
-  }
-  async function savePendientes(){
-    const tbody = document.querySelector('#pendientesTable tbody');
-    const status = document.getElementById('pendientesStatus');
-    const err = document.getElementById('pendientesError');
-    const rows = [...tbody.querySelectorAll('tr')];
-    const payload = rows.map(tr => {
-      const [tdDesc, tdCheck] = tr.children;
-      const id = tr.dataset.id ? Number(tr.dataset.id) : undefined;
-      const descripcion = (tdDesc.textContent || '').trim();
-      const estado = tdCheck.querySelector('input[type="checkbox"]').checked;
-      const obj = { descripcion, estado };
-      if (id) obj.id = id;
-      return obj;
-    });
-    status.textContent = '💾 Guardando...'; err.textContent = '';
-    try {
-      const { data, error } = await supabaseClient.from('pendientes').upsert(payload, { onConflict: 'id' }).select('id, descripcion, estado');
-      if (error) throw error;
-      tbody.innerHTML = ''; data.sort((a,b)=>a.id-b.id).forEach(item => tbody.appendChild(trPendiente(item)));
-      status.textContent = '✅ Cambios guardados';
-    } catch(e){ err.textContent = 'No se pudieron guardar los cambios.'; status.textContent = ''; }
-  }
-
-  // --- Familias (Admin)
-  let familiasAdminData = [];
-  const famSearch = () => (document.getElementById('fam-search').value || '').trim().toLowerCase();
-
-  function renderFamiliasAdmin(){
-    const q = famSearch();
-    const tbody = document.querySelector('#familiasAdminTable tbody');
-    const rows = (q.length >= 2)
-      ? familiasAdminData.filter(f =>
-          (f.nombres_apellidos||'').toLowerCase().includes(q) ||
-          (f.apellido_familia||'').toLowerCase().includes(q) ||
-          (f.direccion||'').toLowerCase().includes(q) ||
-          (String(f.dni_solicitante||'')).includes(q))
-      : familiasAdminData;
-
-    tbody.innerHTML = '';
-    rows.forEach(f => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td data-label="Nombres">${escapeHtml(f.nombres_apellidos||'')}</td>
-        <td data-label="DNI">${escapeHtml(f.dni_solicitante||'')}</td>
-        <td data-label="Apellido">${escapeHtml(f.apellido_familia||'')}</td>
-        <td data-label="Dirección">${escapeHtml(f.direccion||'')}</td>
-        <td data-label="Fecha">${escapeHtml(f.fecha_registro||'')}</td>
-        <td data-label="Teléfono">${escapeHtml(f.telefono_contacto||'')}</td>
-        <td data-label="Obs.">${escapeHtml(f.observaciones||'')}</td>
-      `;
-      tbody.appendChild(tr);
-    });
-    document.getElementById('fam-count').textContent = `${rows.length} registro${rows.length === 1 ? '' : 's'}`;
-  }
-
-  async function loadFamiliasAdmin(){
-    const errBox = document.getElementById('familiasAdminError');
-    errBox.style.display = 'none';
-    familiasAdminData = [];
-    try {
-      const { data, error } = await supabaseClient
-        .from('familias')
-        .select('id, nombres_apellidos, dni_solicitante, apellido_familia, direccion, fecha_registro, telefono_contacto, observaciones')
-        .order('id', { ascending: true });
-      if (error) throw error;
-      familiasAdminData = data || [];
-      renderFamiliasAdmin();
-      return;
-    } catch (e) {
-      // fallback API
-    }
-    try {
-      const res = await fetch('https://api-familias.onrender.com/familias');
-      if (!res.ok) throw new Error('API Render error');
-      const data = await res.json();
-      familiasAdminData = (Array.isArray(data) ? data : (data.items || []))
-        .map(x => ({
-          nombres_apellidos: x.nombres_apellidos || x.nombres || '',
-          dni_solicitante: x.dni_solicitante || x.dni || '',
-          apellido_familia: x.apellido_familia || x.apellido || '',
-          direccion: x.direccion || '',
-          fecha_registro: x.fecha_registro || x.fecha || '',
-          telefono_contacto: x.telefono_contacto || x.telefono || '',
-          observaciones: x.observaciones || x.obs || ''
-        }));
-      renderFamiliasAdmin();
-    } catch (e) {
-      errBox.style.display = 'block';
-    }
-  }
-  document.getElementById('fam-refresh').addEventListener('click', loadFamiliasAdmin);
-  document.getElementById('fam-search').addEventListener('input', renderFamiliasAdmin);
-
-  // --- Calendario (FullCalendar + Supabase)
-
-  function mapEventoToFC(row){
-    return {
-      id: row.id,
-      title: row.titulo ?? row.title ?? row.nombre ?? 'Evento',
-      start: row.fecha_inicio ?? row.start ?? row.inicio ?? row.fecha ?? row.date,
-      end:   row.fecha_fin    ?? row.end   ?? row.fin   ?? null,
-      allDay: !!(row.all_day ?? row.allday ?? row.todo_dia ?? false),
+    const familia = {
+      nombres_apellidos: formData.get("nombres_apellidos"),
+      dni_solicitante: formData.get("dni_solicitante"),
+      apellido_familia: formData.get("apellido_familia"),
+      direccion: formData.get("direccion"),
+      fecha_registro: formData.get("fecha_registro"),
+      telefono_contacto: formData.get("telefono_contacto"),
+      observaciones: formData.get("observaciones") || null
     };
-  }
-
-  async function fcEventSource(info, success, failure){
     try {
-      const cols = 'id, titulo, fecha_inicio, fecha_fin, all_day';
-      const { data, error } = await supabaseClient
-        .from('eventos')
-        .select(cols)
-        .order('fecha_inicio', { ascending: true });
+      const { error } = await supabaseClient.from("familias").insert([familia]);
       if (error) throw error;
-      success((data || []).map(mapEventoToFC));
-    } catch (e) {
-      console.error('Cargar eventos:', e);
-      failure(e);
+      msgDiv.innerHTML = "<div class='success'>✅ Registro exitoso</div>";
+      this.reset();
+    } catch (err) {
+      msgDiv.innerHTML = "<div class='error'>❌ Error al registrar: " + err.message + "</div>";
     }
-  }
+  });
 
-  // Modal CRUD elementos
-  const $modal = document.getElementById('event-modal');
-  const $form  = document.getElementById('event-form');
-  const $id    = document.getElementById('ev-id');
-  const $title = document.getElementById('ev-title');
-  const $start = document.getElementById('ev-start');
-  const $end   = document.getElementById('ev-end');
-  const $all   = document.getElementById('ev-allday');
-  const $del   = document.getElementById('ev-delete');
-  const $cancel= document.getElementById('ev-cancel');
-
-  function openEventModal({ id=null, title='', start=null, end=null, allDay=false } = {}) {
-    $id.value = id ?? '';
-    $title.value = title ?? '';
-    $all.checked = !!allDay;
-
-    const toLocal = (d) => {
-      if (!d) return '';
-      const dt = (typeof d === 'string') ? new Date(d) : d;
-      const off = dt.getTimezoneOffset();
-      const dt2 = new Date(dt.getTime() - off*60*1000);
-      return dt2.toISOString().slice(0,16);
-    };
-
-    $start.value = start ? toLocal(start) : '';
-    $end.value   = end ? toLocal(end) : '';
-    if (allDay && start && typeof start === 'string' && start.length === 10) {
-      $start.value = start + 'T00:00';
-    }
-
-    $del.style.display = id ? 'inline-block' : 'none';
-    $modal.style.display = 'flex';
-  }
-  function closeEventModal(){ $modal.style.display='none'; $form.reset(); }
-
-  $form.addEventListener('submit', async (e) => {
+  /* ====== Login con Firebase ====== */
+  document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const payload = {
-      titulo: $title.value.trim(),
-      all_day: $all.checked,
-      fecha_inicio: $start.value ? new Date($start.value).toISOString() : null,
-      fecha_fin: $end.value ? new Date($end.value).toISOString() : null
-    };
-
+    const msg = document.getElementById('loginMessage');
+    msg.textContent = '';
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
     try {
-      if ($id.value) {
-        const { error } = await supabaseClient.from('eventos').update(payload).eq('id', Number($id.value));
-        if (error) throw error;
-      } else {
-        const { error } = await supabaseClient.from('eventos').insert([payload]);
-        if (error) throw error;
-      }
-      closeEventModal();
-      calendarInstance?.refetchEvents();
-    } catch {
-      alert('No se pudo guardar el evento.');
+      await signInWithEmailAndPassword(auth, email, password);
+      msg.style.color = '#0a7b2e';
+      msg.textContent = '✔ Acceso concedido';
+      document.getElementById("btn-login").style.display = "none";
+      document.getElementById("btn-logout").style.display = "inline-block";
+      showSection('inicio');
+    } catch (err) {
+      msg.style.color = '#b00020';
+      msg.textContent = '❌ ' + (err?.message || 'Error');
     }
   });
 
-  $del.addEventListener('click', async () => {
-    if (!$id.value) return;
-    if (!confirm('¿Eliminar este evento?')) return;
+  async function resetPass() {
+    const email = prompt('Ingresa tu correo:');
+    if (!email) return;
     try {
-      const { error } = await supabaseClient.from('eventos').delete().eq('id', Number($id.value));
-      if (error) throw error;
-      closeEventModal();
-      calendarInstance?.refetchEvents();
-    } catch {
-      alert('No se pudo borrar el evento.');
+      await sendPasswordResetEmail(auth, email);
+      alert('📩 Hemos enviado un enlace de recuperación si el correo existe.');
+    } catch (err) {
+      alert('❌ Error al enviar el correo de recuperación.');
     }
-  });
-
-  $cancel.addEventListener('click', closeEventModal);
-  $modal.addEventListener('click', (e) => { if (e.target === $modal) closeEventModal(); });
-
-  function initCalendar(){
-    const el = document.getElementById('calendar');
-    if (!el) return;
-
-    if (calendarInstance) {
-      requestAnimationFrame(()=> calendarInstance.render());
-      return;
-    }
-
-    if (!el.style.minHeight) el.style.minHeight = '520px';
-
-    requestAnimationFrame(() => {
-      calendarInstance = new FullCalendar.Calendar(el, {
-        initialView: 'dayGridMonth',
-        selectable: true,
-        editable: true,
-        height: 'auto',
-        headerToolbar: {
-          left: 'prev,next today',
-          center: 'title',
-          right: 'dayGridMonth,timeGridWeek,timeGridDay'
-        },
-        events: fcEventSource,
-
-        select: (info) => {
-          openEventModal({
-            title: '',
-            start: info.start,
-            end: info.end,
-            allDay: info.allDay
-          });
-          calendarInstance.unselect();
-        },
-
-        eventClick: (arg) => {
-          const e = arg.event;
-          openEventModal({
-            id: e.id,
-            title: e.title,
-            start: e.start,
-            end: e.end,
-            allDay: e.allDay
-          });
-        },
-
-        eventChange: async (arg) => {
-          const e = arg.event;
-          try {
-            const { error } = await supabaseClient
-              .from('eventos')
-              .update({
-                fecha_inicio: e.start ? e.start.toISOString() : null,
-                fecha_fin: e.end ? e.end.toISOString() : null,
-                all_day: !!e.allDay
-              })
-              .eq('id', Number(e.id));
-            if (error) throw error;
-          } catch {
-            alert('No se pudo actualizar la fecha del evento.');
-            arg.revert();
-          }
-        }
-      });
-      calendarInstance.render();
-    });
   }
 
-  // QR Code generar credencial (ejemplo)
-  function generarCredencial(){
-    const nombre = document.getElementById('nombre').value.trim();
-    const contenedorQR = document.getElementById('qrcode');
-    contenedorQR.innerHTML = '';
-    if (!nombre) {
-      alert('Por favor ingresa un nombre.');
-      return;
-    }
-    new QRCode(contenedorQR, {
-      text: nombre,
-      width: 128,
-      height: 128
-    });
+  async function logout() {
+    await signOut(auth);
+    alert("👋 Sesión cerrada");
+    document.getElementById("btn-login").style.display = "inline-block";
+    document.getElementById("btn-logout").style.display = "none";
+    showSection("inicio");
   }
 
-  // Registro de service worker, inicialización mapa y auth
-  document.addEventListener('DOMContentLoaded', () => {
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("service-worker.js", { updateViaCache: "none" })
-        .then(reg => reg.update().catch(()=>{})).catch(()=>{});
-    }
-    initMap();
-
-    if (window.firebase && window.firebase.auth) {
-      firebase.auth().onAuthStateChanged(user => { updateAuthUI(user); });
-    }
-  });
+  /* ====== Navegación entre Secciones ====== */
+  window.showSection = function(id) {
+    document.querySelectorAll('.seccion').forEach(sec => sec.classList.remove('active'));
+    document.getElementById(id)?.classList.add('active');
+  };
 </script>
-
 </body>
 </html>

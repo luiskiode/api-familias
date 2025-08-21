@@ -6,7 +6,7 @@
   <title>Iniciar Sesión - Cáritas CNC</title>
   <link rel="stylesheet" href="styles.css?v=2" />
 
-  <!-- Unificación a Firebase compat v10 -->
+  <!-- Firebase compat v10 -->
   <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script defer src="firebase-config.js"></script>
@@ -33,19 +33,20 @@
   </main>
 
   <script>
-  // Login simple con Firebase Auth (compat)
+  // Login con Firebase Auth (compat)
   document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const msg = document.getElementById('loginMessage');
     msg.textContent = '';
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
-    try{
+
+    try {
       await firebase.auth().signInWithEmailAndPassword(email, password);
       msg.style.color = '#0a7b2e';
       msg.textContent = '✔ Acceso concedido. Redirigiendo…';
-      window.location.href = 'index.html';
-    }catch(err){
+      setTimeout(() => window.location.href = 'index.html', 1000);
+    } catch (err) {
       msg.style.color = '#b00020';
       msg.textContent = '❌ ' + (err?.message || 'No se pudo iniciar sesión');
       console.error(err);
@@ -54,12 +55,12 @@
 
   async function resetPass(){
     const email = prompt('Ingresa tu correo para recuperar la contraseña:');
-    if(!email) return;
-    try{
+    if (!email) return;
+    try {
       await firebase.auth().sendPasswordResetEmail(email);
-      alert('Hemos enviado un enlace de recuperación si el correo existe.');
-    }catch(err){
-      alert('No se pudo enviar el correo de recuperación.');
+      alert('📩 Si el correo existe, se envió un enlace de recuperación.');
+    } catch (err) {
+      alert('❌ No se pudo enviar el correo de recuperación.');
       console.error(err);
     }
   }
